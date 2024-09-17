@@ -860,6 +860,12 @@ def get_count_aprovados_pcd(filters: dict) -> List[CountApprovedRequest]:
     if filters.get('carteira'):
         condition += " and numero_carteira = %s"
         params.append(filters['carteira'])
+    if filters.get('municipio'):
+        condition += " AND LOWER(a.municipios_beneficiario_meta) LIKE %s"
+        params.append("%" + filters['municipio'].lower() + "%")
+    if filters.get('local_de_retirada'):
+        condition += " AND LOWER(s.local_de_retirada_meta) LIKE %s"
+        params.append("%" + filters['local_de_retirada'].lower() + "%")
     if filters.get('start_date'):
         condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
@@ -1221,6 +1227,12 @@ def get_count_aprovados_ciptea(filters: dict) -> List[CountApprovedRequest]:
     if filters.get('carteira'):
         condition += " and numero_carteira = %s"
         params.append(filters['carteira'])
+    if filters.get('municipio'):
+        condition += " AND LOWER(a.municipios_beneficiario_meta) LIKE %s"
+        params.append("%" + filters['municipio'].lower() + "%")
+    if filters.get('local_de_retirada'):
+        condition += " AND LOWER(s.local_de_retirada_meta) LIKE %s"
+        params.append("%" + filters['local_de_retirada'].lower() + "%")
     if filters.get('start_date'):
         condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
