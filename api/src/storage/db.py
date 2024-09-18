@@ -355,6 +355,9 @@ def get_count_cpf_hash(filters: dict) -> List[CountHashRequest]:
     if filters.get('local_de_retirada'):
         condition += 'and lower(local_de_retirada_meta) like %s'
         params.append('%'+ filters['local_de_retirada'] + '%')
+    if filters.get('cid'):
+        condition += 'and lower(cid) like %s'
+        params.append('%'+ filters['cid'] + '%')
     if filters.get('deficiencia'):
         condition += 'and lower(tipo_da_deficiencia_meta) like %s'
         params.append('%'+ filters['deficiencia'] + '%')
