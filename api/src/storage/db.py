@@ -633,10 +633,10 @@ def get_solicitacoes(filters: dict) -> List[SolicitationRequest]:
         else:
             condition += " and channelId in (12837, 6790, 6744)"
     if filters.get('start_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
     if filters.get('id'):
         condition += " and id > %s"
@@ -735,10 +735,10 @@ def get_count_solicitacoes(filters: dict) -> List[CountSolicitationRequest]:
         else:
             condition += " and channelId in (12837, 6790, 6744)"
     if filters.get('start_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
 
     params.append(filters['fim'])

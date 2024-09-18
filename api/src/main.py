@@ -767,13 +767,14 @@ async def solicitacoes(
         municipio: Optional[str] = Query(None, alias='municipio'),
         projeto: Optional[str] = Query(None, alias='projeto'),
         start_date: Optional[str] = Query(None, alias='start_dade'),
-        end_date: Optional[str] = Query(None, alias='end_date')
+        end_date: Optional[str] = Query(None, alias='end_date'),
+        orientation_date: Optional[str] = Query(None, alias='orientation_date')
 ):
     filters = {'alert_id': alert_id, 'cpf': cpf, 'hashId': hashId, 'inicio': inicio, 'fim': fim, 'order':order,
                'nome': nome, 'nome_responsavel': nome_responsavel, 'cid': cid, 'deficiencia': deficiencia,
                'local_retirada': local_retirada, 'municipio': municipio,
                'status': status, 'projeto': projeto, 
-               'start_date': start_date, 'end_date': end_date}
+               'start_date': start_date, 'end_date': end_date, 'orientation_date': orientation_date}
 
     requests = get_solicitacoes(filters=filters)
 
@@ -829,12 +830,13 @@ async def count_solicitacoes(
         municipio: Optional[str] = Query(None, alias='municipio'),
         projeto: Optional[str] = Query(None, alias='projeto'),
         start_date: Optional[str] = Query(None, alias='start_date'),
-        end_date: Optional[str] = Query(None, alias='end_date')
+        end_date: Optional[str] = Query(None, alias='end_date'),
+        orientation_date: Optional[str] = Query(None, alias='orientation_date')
 ):
     filters = {'alert_id': alert_id, 'cpf': cpf, 'hashId': hashId, 'inicio': inicio, 'fim': fim,
                'nome': nome, 'cid': cid, 'deficiencia': deficiencia, 'local_retirada': local_retirada,
                'municipio': municipio, 'status': status, 'projeto': projeto, 
-               'start_date': start_date, 'end_date': end_date}
+               'start_date': start_date, 'end_date': end_date, 'orientation_date': orientation_date}
 
     requests = get_count_solicitacoes(filters=filters)
 
