@@ -50,6 +50,29 @@ def serialize_hash(requests):
         'nome_responsavel': r.resp_nome,
         'cid': r.cid,
         'deficiencia': r.tipo_da_deficiencia_meta,
+        'municipio': r.municipio,
+        'naturalidade': r.naturalidade,
+        'idade': r.idade,
+        'telefone_beneficiario': r.benef_telefone,
+        'local_de_retirada': r.local_de_retirada,
+        'alert_id': r.alert_id,
+        'channelId': r.channelId,
+        'last_created': r.last_created,
+        'last_updated': r.last_updated,
+        'count': r.total,
+        'curatela_tutela': r.curatela_tutela
+    } for r in requests]
+
+def serialize_hash_arquivados(requests):
+    return [{
+        'cpf': r.benef_cpf,
+        'hashId': r.hashId,
+        'nome': r.benef_nome,
+        'nome_responsavel': r.resp_nome,
+        'cid': r.cid,
+        'deficiencia': r.tipo_da_deficiencia_meta,
+        'municipio': r.municipio,
+        'auditor': r.auditor_arquivado,
         'naturalidade': r.naturalidade,
         'idade': r.idade,
         'telefone_beneficiario': r.benef_telefone,
@@ -683,7 +706,7 @@ async def get_cpf(
     requests = get_arquivados(filters=filters)
 
     return {
-        "requests": serialize_hash(requests)
+        "requests": serialize_hash_arquivados(requests)
     }
 
 @app.get("/count_arquivados")

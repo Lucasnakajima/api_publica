@@ -380,66 +380,67 @@ def get_count_cpf_hash(filters: dict) -> List[CountHashRequest]:
 
 def get_arquivados(filters: dict) -> List[HashRequest]:
 
-    query = Queries.get_cpf_hash
+    query = Queries.get_arquivados
     params = []
     order = filters['order']
     condition = ''
     condition_group = ''
+    status_condition = ''
     
     if filters.get('status'):
-        condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        status_condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('nome'):
-        condition += " and lower(benef_nome) like %s"
+        condition += " and lower(s.benef_nome) like %s"
         params.append('%' + filters['nome'] + '%')
     if filters.get('nome_responsavel'):
-        condition += 'and lower(resp_nome) like %s'
+        condition += 'and lower(s.resp_nome) like %s'
         params.append('%'+ filters['nome_responsavel'] + '%')
     if filters.get('cid'):
-        condition += 'and lower(cid) like %s'
-        params.append('%'+ filters['cid'] + '%')
+        condition += 'and lower(s.cid) like %s'
+        params.append('%'+ filters['s.cid'] + '%')
     if filters.get('cpf'):
-        condition += " and benef_cpf like %s"
+        condition += " and s.benef_cpf like %s"
         params.append(filters['cpf'])
     if filters.get('alert_id'):
-        condition += "and alert_id in (%s)"
+        condition += "and s.alert_id in (%s)"
         params.append(filters['alert_id'])
     if filters.get('projeto'):
         projeto = filters['projeto']
         if projeto == 'PCD':
-            condition += "and (channelId like '%4495%' or channelId like '%4499%' or channelId like '%12836%')"
+            condition += "and (s.channelId like '%4495%' or s.channelId like '%4499%' or s.channelId like '%12836%')"
         elif projeto == 'CIPTEA':
-            condition += "and (channelId like '%6744%' or channelId like '%6790%' or channelId like '%12837%')"
+            condition += "and (s.channelId like '%6744%' or s.channelId like '%6790%' or s.channelId like '%12837%')"
         else:
             condition += 'null'
     if filters.get('via'):
-        condition += " and tipo_carteira=%s "
+        condition += " and s.tipo_carteira=%s "
         params.append(filters['via'])
     if filters.get('municipio_realizado_cadastro'):
-        condition += 'and lower(municipio_realizado_cadastro_meta) like %s'
+        condition += 'and lower(s.municipio_realizado_cadastro_meta) like %s'
         params.append('%'+ filters['municipio_realizado_cadastro'] + '%')
     if filters.get('local_de_retirada'):
-        condition += 'and lower(local_de_retirada_meta) like %s'
+        condition += 'and lower(s.local_de_retirada_meta) like %s'
         params.append('%'+ filters['local_de_retirada'] + '%')
     if filters.get('deficiencia'):
-        condition += 'and lower(tipo_da_deficiencia_meta) like %s'
+        condition += 'and lower(s.tipo_da_deficiencia_meta) like %s'
         params.append('%'+ filters['deficiencia'] + '%') 
     if filters.get('start_date'):
-        condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) >= %s "
+        condition_group += " and MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) >= %s "
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) <= %s "
+        condition_group += " and MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) <= %s "
         params.append(filters['end_date'])
     if filters.get('especific_date'):
-        condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) = %s "
+        condition_group += " and MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) = %s "
         params.append(filters['especific_date'])
 
     params.append(filters['fim'])
     params.append(filters['inicio'])
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition ,conditions_group=condition_group ,order=order), params)
+    cursor.execute(query.format(conditions=condition ,conditions_group=condition_group ,order=order, status_condition=status_condition), params)
     requests = cursor.fetchall()
 
     return [HashRequest(*req) for req in requests]
