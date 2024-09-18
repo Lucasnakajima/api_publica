@@ -84,7 +84,8 @@ class Queries(str, Enum):
     '''
 
     get_cpf_hash = '''
-            select benef_cpf, hashId, benef_nome, resp_nome, 
+            select benef_cpf, hashId, auditor, benef_nome, resp_nome,
+            UPPER(REPLACE(municipio_realizado_cadastro_meta, '_', ' ')) AS municipio,
             UPPER(REPLACE(cid, '_', ' ')) AS cid, 
             tipo_da_deficiencia_meta, 
             UPPER(REPLACE(municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
