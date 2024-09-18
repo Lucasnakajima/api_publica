@@ -766,7 +766,7 @@ async def solicitacoes(
         local_retirada: Optional[str] = Query(None, alias='local_retirada'),
         municipio: Optional[str] = Query(None, alias='municipio'),
         projeto: Optional[str] = Query(None, alias='projeto'),
-        start_date: Optional[str] = Query(None, alias='start_dade'),
+        start_date: Optional[str] = Query(None, alias='start_date'),
         end_date: Optional[str] = Query(None, alias='end_date'),
         orientation_date: Optional[str] = Query(None, alias='orientation_date')
 ):
