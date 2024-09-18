@@ -442,7 +442,7 @@ def get_arquivados(filters: dict) -> List[HashRequest]:
     cursor.execute(query.format(status_condition=status_condition, conditions=condition ,conditions_group=condition_group ,order=order), params)
     requests = cursor.fetchall()
 
-    return [HashRequest(*req) for req in requests]
+    return [HashRequestArquivados(*req) for req in requests]
 
 def get_count_arquivados(filters: dict) -> List[CountHashRequest]:
 
