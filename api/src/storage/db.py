@@ -388,7 +388,7 @@ def get_arquivados(filters: dict) -> List[HashRequest]:
     status_condition = ''
     
     if filters.get('status'):
-        status_condition = "statusId IN ({})".format(", ".join(["%s"] * len(filters['status'])))
+        status_condition = "({})".format(", ".join(["%s"] * len(filters['status'])))
         params.extend(filters['status'])
     if filters.get('nome'):
         condition += " and lower(s.benef_nome) like %s"

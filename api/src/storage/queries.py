@@ -120,9 +120,8 @@ class Queries(str, Enum):
         COUNT(*) AS total_solicitacoes
         FROM solicitacoes s
         LEFT JOIN historico h ON s.alert_id = h.alert_id
-        AND h.{status_condition} 
-        WHERE 1=1 {conditions}
-        AND s.{status_condition}
+        AND h.statusId = s.statusId 
+        WHERE s.statusId IN {status_condition} {conditions}
         GROUP BY s.benef_cpf HAVING 1=1 {conditions_group}  ORDER BY last_created {order} LIMIT %s OFFSET %s;
     '''
 
