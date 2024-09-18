@@ -388,9 +388,8 @@ def get_arquivados(filters: dict) -> List[HashRequest]:
     status_condition = ''
     
     if filters.get('status'):
-        status_condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
-        for i in filters.get('status'):
-            params.append(i)
+        status_condition = "statusId IN ({})".format(", ".join(["%s"] * len(filters['status'])))
+        params.extend(filters['status'])
     if filters.get('nome'):
         condition += " and lower(s.benef_nome) like %s"
         params.append('%' + filters['nome'] + '%')
@@ -440,7 +439,7 @@ def get_arquivados(filters: dict) -> List[HashRequest]:
     params.append(filters['inicio'])
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition ,conditions_group=condition_group ,order=order, status_condition=status_condition), params)
+    cursor.execute(query.format(status_condition=status_condition, conditions=condition ,conditions_group=condition_group ,order=order), params)
     requests = cursor.fetchall()
 
     return [HashRequest(*req) for req in requests]

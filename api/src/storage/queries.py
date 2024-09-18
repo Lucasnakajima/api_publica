@@ -101,29 +101,29 @@ class Queries(str, Enum):
 
     get_arquivados = '''
             SELECT 
-    s.benef_cpf, 
-    s.hashId, 
-    s.benef_nome, 
-    s.resp_nome,
-    h.auditor AS auditor_arquivado,
-    UPPER(REPLACE(s.municipio_realizado_cadastro_meta, '_', ' ')) AS municipio,
-    UPPER(REPLACE(s.cid, '_', ' ')) AS cid, 
-    s.tipo_da_deficiencia_meta, 
-    UPPER(REPLACE(s.municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
-    fn_CALC_IDADE(s.benef_data_nasc) as idade, 
-    s.benef_telefone, 
-    UPPER(REPLACE(REGEXP_REPLACE(s.local_de_retirada_meta, '^[0-9]+_', ''), '_', ' ')) AS local_de_retirada_meta,
-    GROUP_CONCAT(s.channelId) as channelId,
-    GROUP_CONCAT(s.alert_id) as alert_id,
-    MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) AS last_created, 
-    MAX(DATE(CONVERT_TZ(s.updated_at, '+00:00', '-04:00'))) AS last_updated, 
-    COUNT(*) AS total_solicitacoes
-FROM solicitacoes s
-LEFT JOIN historico h ON s.alert_id = h.alert_id
-AND h.{status_condition} 
-WHERE 1=1 {conditions}
-AND s.{status_condition}
-GROUP BY s.benef_cpf HAVING 1=1 {conditions_group}  ORDER BY last_created {order} LIMIT %s OFFSET %s;
+        s.benef_cpf, 
+        s.hashId, 
+        s.benef_nome, 
+        s.resp_nome,
+        h.auditor AS auditor_arquivado,
+        UPPER(REPLACE(s.municipio_realizado_cadastro_meta, '_', ' ')) AS municipio,
+        UPPER(REPLACE(s.cid, '_', ' ')) AS cid, 
+        s.tipo_da_deficiencia_meta, 
+        UPPER(REPLACE(s.municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
+        fn_CALC_IDADE(s.benef_data_nasc) as idade, 
+        s.benef_telefone, 
+        UPPER(REPLACE(REGEXP_REPLACE(s.local_de_retirada_meta, '^[0-9]+_', ''), '_', ' ')) AS local_de_retirada_meta,
+        GROUP_CONCAT(s.channelId) as channelId,
+        GROUP_CONCAT(s.alert_id) as alert_id,
+        MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) AS last_created, 
+        MAX(DATE(CONVERT_TZ(s.updated_at, '+00:00', '-04:00'))) AS last_updated, 
+        COUNT(*) AS total_solicitacoes
+        FROM solicitacoes s
+        LEFT JOIN historico h ON s.alert_id = h.alert_id
+        AND h.{status_condition} 
+        WHERE 1=1 {conditions}
+        AND s.{status_condition}
+        GROUP BY s.benef_cpf HAVING 1=1 {conditions_group}  ORDER BY last_created {order} LIMIT %s OFFSET %s;
     '''
 
     get_count_cpf_hash = '''
