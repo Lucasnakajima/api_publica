@@ -75,7 +75,7 @@ class Queries(str, Enum):
 
     get_count_aprovados = '''
             select count(*) as count
-            from {projeto} where {conditions}
+            from {projeto} a join solicitacoes s on a.alert_id=s.alert_id where {conditions}
     '''
 
     get_last_number = '''

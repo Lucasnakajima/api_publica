@@ -848,20 +848,20 @@ def get_count_aprovados_pcd(filters: dict) -> List[CountApprovedRequest]:
     condition = ''
 
     if filters.get('status'):
-        condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += "a.statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('alert_id'):
-        condition += ' and alert_id=%s'
+        condition += ' and a.alert_id=%s'
         params.append(filters['alert_id'])
     if filters.get('cpf'):
-        condition += " and cpf like %s"
+        condition += " and a.cpf like %s"
         params.append(filters['cpf'])
     if filters.get('nome'):
-        condition += " and lower(nome) like %s"
+        condition += " and lower(a.nome) like %s"
         params.append('%'+filters['nome']+'%')
     if filters.get('carteira'):
-        condition += " and numero_carteira = %s"
+        condition += " and a.numero_carteira = %s"
         params.append(filters['carteira'])
     if filters.get('municipio'):
         condition += " AND LOWER(a.municipios_beneficiario_meta) LIKE %s"
@@ -870,13 +870,13 @@ def get_count_aprovados_pcd(filters: dict) -> List[CountApprovedRequest]:
         condition += " AND LOWER(s.local_de_retirada_meta) LIKE %s"
         params.append("%" + filters['local_de_retirada'].lower() + "%")
     if filters.get('start_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
     if filters.get('id'):
-        condition += " and id > %s"
+        condition += " and a.id > %s"
         params.append(filters['id'])
 
     conn = get_conn()
@@ -1215,20 +1215,20 @@ def get_count_aprovados_ciptea(filters: dict) -> List[CountApprovedRequest]:
     condition = ''
 
     if filters.get('status'):
-        condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += "a.statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('alert_id'):
-        condition += ' and alert_id=%s'
+        condition += ' and a.alert_id=%s'
         params.append(filters['alert_id'])
     if filters.get('cpf'):
-        condition += " and cpf like %s"
+        condition += " and a.cpf like %s"
         params.append(filters['cpf'])
     if filters.get('nome'):
-        condition += " and lower(nome) like %s"
+        condition += " and lower(a.nome) like %s"
         params.append('%'+filters['nome']+'%')
     if filters.get('carteira'):
-        condition += " and numero_carteira = %s"
+        condition += " and a.numero_carteira = %s"
         params.append(filters['carteira'])
     if filters.get('municipio'):
         condition += " AND LOWER(a.municipios_beneficiario_meta) LIKE %s"
@@ -1237,13 +1237,13 @@ def get_count_aprovados_ciptea(filters: dict) -> List[CountApprovedRequest]:
         condition += " AND LOWER(s.local_de_retirada_meta) LIKE %s"
         params.append("%" + filters['local_de_retirada'].lower() + "%")
     if filters.get('start_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
     if filters.get('id'):
-        condition += " and id > %s"
+        condition += " and a.id > %s"
         params.append(filters['id'])
 
 
