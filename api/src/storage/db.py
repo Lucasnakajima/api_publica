@@ -355,6 +355,9 @@ def get_count_cpf_hash(filters: dict) -> List[CountHashRequest]:
     if filters.get('local_de_retirada'):
         condition += 'and lower(local_de_retirada_meta) like %s'
         params.append('%'+ filters['local_de_retirada'] + '%')
+    if filters.get('cid'):
+        condition += 'and lower(cid) like %s'
+        params.append('%'+ filters['cid'] + '%')
     if filters.get('deficiencia'):
         condition += 'and lower(tipo_da_deficiencia_meta) like %s'
         params.append('%'+ filters['deficiencia'] + '%')
@@ -377,69 +380,69 @@ def get_count_cpf_hash(filters: dict) -> List[CountHashRequest]:
 
 def get_arquivados(filters: dict) -> List[HashRequest]:
 
-    query = Queries.get_cpf_hash
+    query = Queries.get_arquivados
     params = []
     order = filters['order']
     condition = ''
     condition_group = ''
+    status_condition = ''
     
     if filters.get('status'):
-        condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
-        for i in filters.get('status'):
-            params.append(i)
+        status_condition = "({})".format(", ".join(["%s"] * len(filters['status'])))
+        params.extend(filters['status'])
     if filters.get('nome'):
-        condition += " and lower(benef_nome) like %s"
+        condition += " and lower(s.benef_nome) like %s"
         params.append('%' + filters['nome'] + '%')
     if filters.get('nome_responsavel'):
-        condition += 'and lower(resp_nome) like %s'
+        condition += 'and lower(s.resp_nome) like %s'
         params.append('%'+ filters['nome_responsavel'] + '%')
     if filters.get('cid'):
-        condition += 'and lower(cid) like %s'
-        params.append('%'+ filters['cid'] + '%')
+        condition += 'and lower(s.cid) like %s'
+        params.append('%'+ filters['s.cid'] + '%')
     if filters.get('cpf'):
-        condition += " and benef_cpf like %s"
+        condition += " and s.benef_cpf like %s"
         params.append(filters['cpf'])
     if filters.get('alert_id'):
-        condition += "and alert_id in (%s)"
+        condition += "and s.alert_id in (%s)"
         params.append(filters['alert_id'])
     if filters.get('projeto'):
         projeto = filters['projeto']
         if projeto == 'PCD':
-            condition += "and (channelId like '%4495%' or channelId like '%4499%' or channelId like '%12836%')"
+            condition += "and (s.channelId like '%4495%' or s.channelId like '%4499%' or s.channelId like '%12836%')"
         elif projeto == 'CIPTEA':
-            condition += "and (channelId like '%6744%' or channelId like '%6790%' or channelId like '%12837%')"
+            condition += "and (s.channelId like '%6744%' or s.channelId like '%6790%' or s.channelId like '%12837%')"
         else:
             condition += 'null'
     if filters.get('via'):
-        condition += " and tipo_carteira=%s "
+        condition += " and s.tipo_carteira=%s "
         params.append(filters['via'])
     if filters.get('municipio_realizado_cadastro'):
-        condition += 'and lower(municipio_realizado_cadastro_meta) like %s'
+        condition += 'and lower(s.municipio_realizado_cadastro_meta) like %s'
         params.append('%'+ filters['municipio_realizado_cadastro'] + '%')
     if filters.get('local_de_retirada'):
-        condition += 'and lower(local_de_retirada_meta) like %s'
+        condition += 'and lower(s.local_de_retirada_meta) like %s'
         params.append('%'+ filters['local_de_retirada'] + '%')
     if filters.get('deficiencia'):
-        condition += 'and lower(tipo_da_deficiencia_meta) like %s'
+        condition += 'and lower(s.tipo_da_deficiencia_meta) like %s'
         params.append('%'+ filters['deficiencia'] + '%') 
     if filters.get('start_date'):
-        condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) >= %s "
+        condition_group += " and MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) >= %s "
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) <= %s "
+        condition_group += " and MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) <= %s "
         params.append(filters['end_date'])
     if filters.get('especific_date'):
-        condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) = %s "
+        condition_group += " and MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) = %s "
         params.append(filters['especific_date'])
 
     params.append(filters['fim'])
     params.append(filters['inicio'])
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition ,conditions_group=condition_group ,order=order), params)
+    cursor.execute(query.format(status_condition=status_condition, conditions=condition ,conditions_group=condition_group ,order=order), params)
     requests = cursor.fetchall()
 
-    return [HashRequest(*req) for req in requests]
+    return [HashRequestArquivados(*req) for req in requests]
 
 def get_count_arquivados(filters: dict) -> List[CountHashRequest]:
 
@@ -633,10 +636,10 @@ def get_solicitacoes(filters: dict) -> List[SolicitationRequest]:
         else:
             condition += " and channelId in (12837, 6790, 6744)"
     if filters.get('start_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
     if filters.get('id'):
         condition += " and id > %s"
@@ -735,10 +738,10 @@ def get_count_solicitacoes(filters: dict) -> List[CountSolicitationRequest]:
         else:
             condition += " and channelId in (12837, 6790, 6744)"
     if filters.get('start_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
 
     params.append(filters['fim'])
@@ -845,20 +848,20 @@ def get_count_aprovados_pcd(filters: dict) -> List[CountApprovedRequest]:
     condition = ''
 
     if filters.get('status'):
-        condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += "a.statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('alert_id'):
-        condition += ' and alert_id=%s'
+        condition += ' and a.alert_id=%s'
         params.append(filters['alert_id'])
     if filters.get('cpf'):
-        condition += " and cpf like %s"
+        condition += " and a.cpf like %s"
         params.append(filters['cpf'])
     if filters.get('nome'):
-        condition += " and lower(nome) like %s"
+        condition += " and lower(a.nome) like %s"
         params.append('%'+filters['nome']+'%')
     if filters.get('carteira'):
-        condition += " and numero_carteira = %s"
+        condition += " and a.numero_carteira = %s"
         params.append(filters['carteira'])
     if filters.get('municipio'):
         condition += " AND LOWER(a.municipios_beneficiario_meta) LIKE %s"
@@ -867,13 +870,13 @@ def get_count_aprovados_pcd(filters: dict) -> List[CountApprovedRequest]:
         condition += " AND LOWER(s.local_de_retirada_meta) LIKE %s"
         params.append("%" + filters['local_de_retirada'].lower() + "%")
     if filters.get('start_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
     if filters.get('id'):
-        condition += " and id > %s"
+        condition += " and a.id > %s"
         params.append(filters['id'])
 
     conn = get_conn()
@@ -1212,20 +1215,20 @@ def get_count_aprovados_ciptea(filters: dict) -> List[CountApprovedRequest]:
     condition = ''
 
     if filters.get('status'):
-        condition += "statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += "a.statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('alert_id'):
-        condition += ' and alert_id=%s'
+        condition += ' and a.alert_id=%s'
         params.append(filters['alert_id'])
     if filters.get('cpf'):
-        condition += " and cpf like %s"
+        condition += " and a.cpf like %s"
         params.append(filters['cpf'])
     if filters.get('nome'):
-        condition += " and lower(nome) like %s"
+        condition += " and lower(a.nome) like %s"
         params.append('%'+filters['nome']+'%')
     if filters.get('carteira'):
-        condition += " and numero_carteira = %s"
+        condition += " and a.numero_carteira = %s"
         params.append(filters['carteira'])
     if filters.get('municipio'):
         condition += " AND LOWER(a.municipios_beneficiario_meta) LIKE %s"
@@ -1234,13 +1237,13 @@ def get_count_aprovados_ciptea(filters: dict) -> List[CountApprovedRequest]:
         condition += " AND LOWER(s.local_de_retirada_meta) LIKE %s"
         params.append("%" + filters['local_de_retirada'].lower() + "%")
     if filters.get('start_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
+        condition += f" and DATE(CONVERT_TZ(a.{filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
     if filters.get('id'):
-        condition += " and id > %s"
+        condition += " and a.id > %s"
         params.append(filters['id'])
 
 

@@ -75,7 +75,7 @@ class Queries(str, Enum):
 
     get_count_aprovados = '''
             select count(*) as count
-            from {projeto} where {conditions}
+            from {projeto} a join solicitacoes s on a.alert_id=s.alert_id where {conditions}
     '''
 
     get_last_number = '''
@@ -84,7 +84,8 @@ class Queries(str, Enum):
     '''
 
     get_cpf_hash = '''
-            select benef_cpf, hashId, benef_nome, resp_nome, 
+            select benef_cpf, hashId, benef_nome, resp_nome,
+            UPPER(REPLACE(municipio_realizado_cadastro_meta, '_', ' ')) AS municipio,
             UPPER(REPLACE(cid, '_', ' ')) AS cid, 
             tipo_da_deficiencia_meta, 
             UPPER(REPLACE(municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
@@ -96,6 +97,32 @@ class Queries(str, Enum):
             MAX(DATE(CONVERT_TZ(updated_at, '+00:00', '-04:00'))) AS last_updated, count(*) 
                 from solicitacoes where {conditions}
             group by benef_cpf having 1=1 {conditions_group} order by last_created {order} limit %s offset %s;
+    '''
+
+    get_arquivados = '''
+            SELECT 
+        s.benef_cpf, 
+        s.hashId, 
+        s.benef_nome, 
+        s.resp_nome,
+        h.auditor AS auditor_arquivado,
+        UPPER(REPLACE(s.municipio_realizado_cadastro_meta, '_', ' ')) AS municipio,
+        UPPER(REPLACE(s.cid, '_', ' ')) AS cid, 
+        s.tipo_da_deficiencia_meta, 
+        UPPER(REPLACE(s.municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
+        fn_CALC_IDADE(s.benef_data_nasc) as idade, 
+        s.benef_telefone, 
+        UPPER(REPLACE(REGEXP_REPLACE(s.local_de_retirada_meta, '^[0-9]+_', ''), '_', ' ')) AS local_de_retirada_meta,
+        GROUP_CONCAT(s.channelId) as channelId,
+        GROUP_CONCAT(s.alert_id) as alert_id,
+        MAX(DATE(CONVERT_TZ(s.created_at, '+00:00', '-04:00'))) AS last_created, 
+        MAX(DATE(CONVERT_TZ(s.updated_at, '+00:00', '-04:00'))) AS last_updated, 
+        COUNT(*) AS total_solicitacoes
+        FROM solicitacoes s
+        LEFT JOIN historico h ON s.alert_id = h.alert_id
+        AND h.statusId = s.statusId 
+        WHERE s.statusId IN {status_condition} {conditions}
+        GROUP BY s.benef_cpf HAVING 1=1 {conditions_group}  ORDER BY last_created {order} LIMIT %s OFFSET %s;
     '''
 
     get_count_cpf_hash = '''
