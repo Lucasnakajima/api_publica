@@ -641,10 +641,7 @@ def get_solicitacoes(filters: dict) -> List[SolicitationRequest]:
     if filters.get('end_date'):
         condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
-    if filters.get('id'):
-        condition += " and id > %s"
-        params.append(filters['id'])
-
+    
     params.append(filters['fim'])
     params.append(filters['inicio'])
     conn = get_conn()
@@ -1063,7 +1060,7 @@ def solicitacoes_xlsx(filters:dict):
     df = pd.DataFrame(result)
 
     df.columns = [
-            'Protocolo', 'CPF do Beneficiario', 'Nome do Beneficiário', 'RG do Beneficiário', 'CID do Beneficiário', 'Naturalidade do Beneficiário', 'Nome da Mãe', 
+            'Protocolo', 'CPF do Beneficiario', 'Nome do Beneficiário', 'RG do Beneficiário', 'CID do Beneficiário', 'Deficiência do Beneficiário', 'Naturalidade do Beneficiário', 'Nome da Mãe', 
             'Nome do Pai', 'Tipo Sanguíneo', 'Data de Nascimento', 'Genêro do Beneficiário', 'Estado Civil', 
             'Nacionalidade', 'Orgão Expedidor', 'Município', 'Tipo Carteira', 'Motivo da 2ª via', 
             'Local de Retirada', 'Endereço do Beneficiário', 'Nome do Responsável', 'CPF do Responsável', 'RG do Responsável', 'Email do Responsável', 'Endereço do Responsável',
