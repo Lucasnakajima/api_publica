@@ -475,7 +475,11 @@ class Queries(str, Enum):
     benef_cpf, 
     UPPER(benef_nome) AS benef_nome, 
     benef_rg, 
-    UPPER(REPLACE(cid, '_', ' ')) AS cid_beneficiario, 
+    UPPER(REPLACE(cid, '_', ' ')) AS cid_beneficiario,
+    CASE 
+    WHEN channelId = 12837 THEN 'intelectual' 
+    ELSE tipo_da_deficiencia_meta 
+     END AS deficiencia,
     UPPER(REPLACE(municipios_naturalidade_meta, '_', ' - ')) AS naturalidade_beneficiario, 
     UPPER(nome_da_mae) AS nome_da_mae, 
     UPPER(nome_do_pai) AS nome_do_pai, 
