@@ -41,7 +41,7 @@ def get_db_credentials():
     secret = secrets_manager.get_secret_value(SecretId=secret_arn)
 
     return {
-        "host": 'rds-pcd-prod.cluster-c4irymq85uhb.sa-east-1.rds.amazonaws.com',
+        "host": 'rds-dev-test-cluster.cluster-c4irymq85uhb.sa-east-1.rds.amazonaws.com',
         "user": json.loads(secret['SecretString'])['username'],
         "password": json.loads(secret['SecretString'])['password'],
     }
@@ -1283,6 +1283,9 @@ def update_aprovados(
     if parameters.get('lote'):
         condition += ' lote = %s,'
         params.append(parameters['lote'])
+    if parameters.get('nome'):
+        condition += ' nome = %s,'
+        params.append(parameters['nome'])
     if parameters.get('statusId'):
         condition += ' statusId = %s'
         params.append(parameters['statusId'])
