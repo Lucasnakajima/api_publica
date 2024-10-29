@@ -1586,9 +1586,12 @@ def getStatus_solicitacao(cpf: str, data_nascimento: str, projeto: str):
     def obter_prioridade(statusId):
         return prioridade_status.get(statusId, len(prioridade_status))
 
+    # Modifique para retornar apenas um registro
+    solicitacoes = [StatusSolicitacao(*solicitacao) for solicitacao in solicitacoes]
+
     # Ordena as solicitações pela prioridade do statusId
     solicitacoes.sort(key=lambda x: obter_prioridade(x.statusId))
 
     # Retorna a solicitação com maior prioridade
-    return StatusSolicitacao(*solicitacoes[0])
+    return solicitacoes[0] if solicitacoes else None
 
