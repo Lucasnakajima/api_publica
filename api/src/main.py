@@ -583,14 +583,19 @@ def serialize_produtividade(requests):
         'total': r.total
     }for r in requests]
 
-def serialize_status_solicitacao(requests):
-    return [{
-        'cpf': r.benef_cpf,
-        'nome': r.benef_nome,
-        'statusId': r.statusId,
-        'alert_id': r.alert_id,
-        'channelId': r.channelId,
-    } for r in requests]
+def serialize_status_solicitacao(solicitacao):
+    # Verifica se a solicitação existe
+    if not solicitacao:
+        return None
+        
+    # Retorna um único dicionário ao invés de uma lista
+    return {
+        'cpf': solicitacao.benef_cpf,
+        'nome': solicitacao.benef_nome,
+        'statusId': solicitacao.statusId,
+        'alert_id': solicitacao.alert_id,
+        'channelId': solicitacao.channelId,
+    }
 
 @app.get("/requests")
 async def requests(limit='100', offset='0', full='false'):
@@ -1451,7 +1456,12 @@ async def get_status_solicitacao(
         if not solicitacao:
             raise HTTPException(status_code=404, detail="Carteira não encontrada")
 
-        return {"response": serialize_status_solicitacao(solicitacao)}
+        # Serializa um único objeto ao invés de uma lista
+        resultado = serialize_status_solicitacao(solicitacao)
+        if not resultado:
+            raise HTTPException(status_code=404, detail="Carteira não encontrada")
+
+        return {"response": resultado}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
