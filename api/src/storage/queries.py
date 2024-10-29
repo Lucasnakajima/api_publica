@@ -1207,3 +1207,9 @@ class Queries(str, Enum):
     ORDER BY
         Auditor
     '''
+
+    get_status_solicitacao = '''
+        SELECT alert_id, benef_cpf, benef_nome, statusId, channelId
+        FROM solicitacoes
+        WHERE {conditions} {conditions_channel_ids}
+    '''

@@ -1547,3 +1547,48 @@ def get_produtividade(filters: dict) -> List[Produtividade]:
     requests = cursor.fetchall()
     return [Produtividade(*req) for req in requests]
 
+def getStatus_solicitacao(cpf: str, data_nascimento: str, projeto: str):
+    channelIds = ''
+    if projeto == 'PCD':
+        channelIds = 'AND channelId IN (12836, 4499, 4495, 14057)'
+    else:
+        channelIds = 'AND channelId IN (12837, 6790, 6744, 13800)'
+
+    # Converte a data de nascimento para o formato do banco de dados
+    try:
+        data_nascimento_formatada = datetime.strptime(data_nascimento, '%d/%m/%Y').strftime('%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Formato de data de nascimento inválido. Use dd/mm/aaaa.")
+    
+    condition = 'benef_cpf = %s AND benef_data_nasc = %s'
+
+    # Consulta para buscar todas as solicitações do beneficiário
+    query = Queries.get_status_solicitacao.format(conditions=condition, conditions_channel_ids=channelIds)
+    params = [cpf, data_nascimento_formatada]
+
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    solicitacoes = cursor.fetchall()
+
+    # Verifica se há solicitações e seleciona a de maior prioridade
+    if not solicitacoes:
+        return None
+
+    # Dicionário de prioridade dos statusId
+    prioridade_status = {
+        10: 0, 19: 0, 17: 0, 24: 1, 7: 1, 18: 1, 29: 1, 9: 2, 23: 3, 27: 4, 22: 5,
+        5: 6, 31: 7, 3: 8, 13: 8, 20: 8, 1: 9, 26: 10, 21: 11, 2: 12, 32: 13, 6: 14,
+        25: 15, 28: 16, 4: 17, 8: 18
+    }
+
+    # Função para obter a prioridade do statusId
+    def obter_prioridade(statusId):
+        return prioridade_status.get(statusId, len(prioridade_status))
+
+    # Ordena as solicitações pela prioridade do statusId
+    solicitacoes.sort(key=lambda x: obter_prioridade(x.statusId))
+
+    # Retorna a solicitação com maior prioridade
+    return StatusSolicitacao(*solicitacoes[0])
+

@@ -583,6 +583,15 @@ def serialize_produtividade(requests):
         'total': r.total
     }for r in requests]
 
+def serialize_status_solicitacao(requests):
+    return [{
+        'cpf': r.benef_cpf,
+        'nome': r.benef_nome,
+        'statusId': r.statusId,
+        'alert_id': r.alert_id,
+        'channelId': r.channelId,
+    } for r in requests]
+
 @app.get("/requests")
 async def requests(limit='100', offset='0', full='false'):
     requests = get_requests(int(limit), int(offset))
@@ -1428,6 +1437,23 @@ async def getProdutividade(
         return {
             'response': 'nenhum dado foi encontrado'
         }
+    
+@app.get("/get_status_solicitacao")
+async def get_status_solicitacao(
+    cpf: str = Query(None, alias='cpf'),
+    data_nascimento: str = Query(None, alias='data_nascimento'),
+    projeto: str = Query(None, alias='projeto')
+):
+    try:
+        # Chama a função que valida a carteira
+        solicitacao = getStatus_solicitacao(cpf, data_nascimento, projeto)
+        
+        if not solicitacao:
+            raise HTTPException(status_code=404, detail="Carteira não encontrada")
+
+        return {"response": serialize_status_solicitacao(solicitacao)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/testilson")
 async def testando():

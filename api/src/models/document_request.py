@@ -903,3 +903,11 @@ class Produtividade:
     for k in self.data.keys():
       if k in data.keys():
         self.data[k] = data[k]
+
+class StatusSolicitacao:
+  def __init__(self, alert_id, benef_cpf, benef_nome, statusId, channelId) -> None:
+    self.alert_id = alert_id
+    self.benef_cpf = benef_cpf
+    self.benef_nome = benef_nome
+    self.statusId = statusId
+    self.channelId = channelId
