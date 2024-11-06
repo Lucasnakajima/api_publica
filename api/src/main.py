@@ -308,6 +308,21 @@ def serialize_solicitation_alert_requests(requests):
         "created_at": r.created_at
     } for r in requests]
 
+def serialize_visual_export(requests):
+    return [{
+        "alert_id": r.alert_id,
+        "benef_nome": r.nome,
+        "municipios_endereco_beneficiario_meta": r.municipio,
+        "statusId": r.statusId,
+        "channelId": r.channelId,
+        "updated_at": r.updated_at
+    } for r in requests]
+
+def serialize_count_visual_export(requests):
+    return [{
+        'count': r.count
+    } for r in requests]
+
 def serialize_last_solicitations(requests):
     return [{
         "alert_id": r.alert_id,
@@ -1470,3 +1485,13 @@ async def testando():
     return {
         'response': 'funcionou'
     }
+
+@app.get("/visual_export")
+async def visual_export_route(filters: dict):
+    result = visual_export(filters)
+    return {"response": serialize_visual_export(result)}
+
+@app.get("/count_visual_export")
+async def count_visual_export_route(filters: dict):
+    count = count_visual_export(filters)
+    return {"response":serialize_count_visual_export(count)}

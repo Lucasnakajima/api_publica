@@ -790,7 +790,8 @@ class Queries(str, Enum):
         WHEN statusId = 28 THEN 'Revisão de Carteira'
         WHEN statusId = 29 THEN 'Emitidas PAC'
         WHEN statusId = 30 THEN 'Aprovado Temporário'
-        ELSE 'Edição de Carteira'
+        WHEN statusId = 31 THEN 'Edição de Carteira'
+        ELSE 'Arquivado Perícia'
     END AS status,
         CASE 
         WHEN channelId = 12837 THEN 'CIPTEA' 
@@ -799,7 +800,7 @@ class Queries(str, Enum):
     FormatDate(created_at),
     FormatDate(updated_at)
     FROM solicitacoes
-    WHERE 1=1 {conditions}
+    WHERE alert_id IN (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {conditions_historico}) {conditions}
     ORDER BY created_at DESC;
     '''
 
@@ -1212,4 +1213,15 @@ class Queries(str, Enum):
         SELECT alert_id, benef_cpf, benef_nome, statusId, channelId
         FROM solicitacoes
         WHERE {conditions} {conditions_channel_ids}
+    '''
+
+    get_visual_export = '''
+        SELECT s.alert_id, benef_nome, channelId, statusId, municipios_endereco_beneficiario_meta, updated_at from solicitacoes s 
+        where s.alert_id in (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {condition_historico}) {condition}
+        order by updated_at desc limit %s offset%s;
+    '''
+
+    get_count_visual_export = '''
+        SELECT count(*) from solicitacoes s 
+        where s.alert_id in (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {condition_historico}) {condition};
     '''

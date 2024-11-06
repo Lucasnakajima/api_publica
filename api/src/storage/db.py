@@ -1035,27 +1035,30 @@ def solicitacoes_xlsx(filters:dict):
     query = Queries.get_solicitacoes_xlsx
     params = []
     condition = ''
+    condition_historico = ''  # Nova variável para condições do histórico
 
     if filters.get('status'):
-        condition += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
-    if filters.get('naturalidade'):
-        condition+="and municipios_naturalidade_meta LIKE %s"
-        params.append('%' + filters['naturalidade'] + '%')
-    if filters.get('municipio'):
-        condition+="and municipios_endereco_beneficiario_meta LIKE %s"
-        params.append('%' + filters['municipio'] + '%')
     if filters.get('start_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
+
+    # Condições restantes para a variável condition
+    if filters.get('naturalidade'):
+        condition += " and municipios_naturalidade_meta LIKE %s"
+        params.append('%' + filters['naturalidade'] + '%')
+    if filters.get('municipio'):
+        condition += " and municipios_endereco_beneficiario_meta LIKE %s"
+        params.append('%' + filters['municipio'] + '%')
     
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition), params)
+    cursor.execute(query.format(conditions=condition, condition_historico=condition_historico), params)
     result = cursor.fetchall()
     df = pd.DataFrame(result)
 
@@ -1073,6 +1076,72 @@ def solicitacoes_xlsx(filters:dict):
     buffer.seek(0)
 
     return buffer
+def visual_export(filters: dict) -> List[VisualExportRequest]:
+    query = Queries.get_visual_export
+    params = []
+    condition = ''
+    condition_historico = ''  # Nova variável para condições do histórico
+
+    if filters.get('status'):
+        condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        for i in filters.get('status'):
+            params.append(i)
+    if filters.get('start_date'):
+        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        params.append(filters['start_date'])
+    if filters.get('end_date'):
+        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        params.append(filters['end_date'])
+
+    # Condições restantes para a variável condition
+    if filters.get('naturalidade'):
+        condition += " and municipios_naturalidade_meta LIKE %s"
+        params.append('%' + filters['naturalidade'] + '%')
+    if filters.get('municipio'):
+        condition += " and municipios_endereco_beneficiario_meta LIKE %s"
+        params.append('%' + filters['municipio'] + '%')
+
+    params.append(filters['fim'])
+    params.append(filters['inicio'])
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(query.format(conditions=condition, condition_historico=condition_historico), params)
+    requests = cursor.fetchall()
+
+    return requests
+
+def count_visual_export(filters: dict) -> int:
+    query = Queries.get_count_visual_export
+    params = []
+    condition = ''
+    condition_historico = ''  # Nova variável para condições do histórico
+
+    if filters.get('status'):
+        condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        for i in filters.get('status'):
+            params.append(i)
+    if filters.get('start_date'):
+        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        params.append(filters['start_date'])
+    if filters.get('end_date'):
+        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        params.append(filters['end_date'])
+
+    # Condições restantes para a variável condition
+    if filters.get('naturalidade'):
+        condition += " and municipios_naturalidade_meta LIKE %s"
+        params.append('%' + filters['naturalidade'] + '%')
+    if filters.get('municipio'):
+        condition += " and municipios_endereco_beneficiario_meta LIKE %s"
+        params.append('%' + filters['municipio'] + '%')
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(query.format(conditions=condition, condition_historico=condition_historico), params)
+    count = cursor.fetchall
+
+    return count
     
 
 def validar_campos_carteira(hashId: str)-> List[ValidarCarteiraHashId]:
@@ -1594,4 +1663,6 @@ def getStatus_solicitacao(cpf: str, data_nascimento: str, projeto: str):
 
     # Retorna a solicitação com maior prioridade
     return solicitacoes[0] if solicitacoes else None
+
+
 
