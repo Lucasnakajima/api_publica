@@ -1106,7 +1106,7 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
     
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition, condition_historico=condition_historico), params)
+    cursor.execute(query.format(condition=condition, condition_historico=condition_historico), params)
     requests = cursor.fetchall()
 
     return requests
@@ -1138,7 +1138,7 @@ def count_visual_export(filters: dict) -> int:
     
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition, condition_historico=condition_historico), params)
+    cursor.execute(query.format(condition=condition, condition_historico=condition_historico), params)
     count = cursor.fetchall
 
     return count
