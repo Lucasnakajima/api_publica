@@ -1076,7 +1076,7 @@ def solicitacoes_xlsx(filters:dict):
     buffer.seek(0)
 
     return buffer
-def visual_export(filters: dict) -> List[VisualExportRequest]:
+def visual_export(filters: dict) -> List[VisualExportResponse]:
     query = Queries.get_visual_export
     params = []
     condition = ''
