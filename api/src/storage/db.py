@@ -1042,7 +1042,7 @@ def solicitacoes_xlsx(filters:dict):
         for i in filters.get('status'):
             params.append(i)
     if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
-        condition_historico += "and carteira = '%s'"
+        condition_historico += "and carteira = %s"
         params.append(filters['carteira'])
     if filters.get('cid'):
         cids = filters['cid'].split(',')
@@ -1094,7 +1094,7 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
         for i in filters.get('status'):
             params.append(i)
     if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
-        condition_historico += "and carteira = '%s'"
+        condition_historico += "and carteira = %s"
         params.append(filters['carteira'])
 
     if filters.get('cid'):
@@ -1139,7 +1139,7 @@ def count_visual_export(filters: dict) -> int:
         for i in filters.get('status'):
             params.append(i)
     if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
-        condition_historico += "and carteira = '%s'"
+        condition_historico += "and carteira = %s"
         params.append(filters['carteira'])
     
     if filters.get('cid'):
