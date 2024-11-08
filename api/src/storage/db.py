@@ -1140,9 +1140,9 @@ def count_visual_export(filters: dict) -> int:
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute(query.format(condition=condition, condition_historico=condition_historico), params)
-    count = cursor.fetchall
+    count = cursor.fetchall()
 
-    return count
+    return [CountVisualExportResponse(*req) for req in count]
     
 
 def validar_campos_carteira(hashId: str)-> List[ValidarCarteiraHashId]:

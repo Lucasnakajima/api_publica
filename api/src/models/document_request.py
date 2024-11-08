@@ -923,5 +923,5 @@ class VisualExportResponse:
 
 # Função para serializar a contagem
 class CountVisualExportResponse:
-    def __init__(self, count: int):
+    def __init__(self, count):
         self.count = count

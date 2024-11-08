@@ -318,8 +318,10 @@ def serialize_visual_export(requests):
         "updated_at": r.updated_at
     } for r in requests]
 
-def serialize_count_visual_export(count):
-    return [{'count': count}]
+def serialize_count_visual_export(requests):
+    return [{
+        'count': r.count
+    } for r in requests]
 
 def serialize_last_solicitations(requests):
     return [{
