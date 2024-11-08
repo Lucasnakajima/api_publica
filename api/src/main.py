@@ -311,8 +311,8 @@ def serialize_solicitation_alert_requests(requests):
 def serialize_visual_export(requests):
     return [{
         "alert_id": r.alert_id,
-        "benef_nome": r.nome,
-        "municipios_endereco_beneficiario_meta": r.municipio,
+        "benef_nome": r.benef_nome,
+        "municipio": r.municipios_endereco_beneficiario_meta,
         "statusId": r.statusId,
         "channelId": r.channelId,
         "updated_at": r.updated_at
