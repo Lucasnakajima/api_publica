@@ -1041,6 +1041,10 @@ def solicitacoes_xlsx(filters:dict):
         condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
+    if filters.get('cid'):
+        cids = filters['cid'].split(',')
+        condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
+        params.extend([f'%{cid.strip()}%' for cid in cids])
     if filters.get('start_date'):
         condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
@@ -1086,6 +1090,12 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
         condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
+
+    if filters.get('cid'):
+        cids = filters['cid'].split(',')
+        condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
+        params.extend([f'%{cid.strip()}%' for cid in cids])
+
     if filters.get('start_date'):
         condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
@@ -1122,6 +1132,12 @@ def count_visual_export(filters: dict) -> int:
         condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
+    
+    if filters.get('cid'):
+        cids = filters['cid'].split(',')
+        condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
+        params.extend([f'%{cid.strip()}%' for cid in cids])
+
     if filters.get('start_date'):
         condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])

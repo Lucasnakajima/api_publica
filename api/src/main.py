@@ -1024,11 +1024,12 @@ async def solicitations_export(
     status: List[int] = Query(None, alias='status'),
     naturalidade: Optional[str] = Query(None, alias='naturalidade'),
     municipio: Optional[str] = Query(None, alias='municipio'),
+    cid: Optional[str] = Query(None, alias='cid'),
     start_date: Optional[str] = Query(None, alias='start_date'),
     end_date: Optional[str] = Query(None, alias='end_date')
 ):
     filters = {'status': status, 'naturalidade': naturalidade, 
-               'municipio': municipio, 'start_date': start_date, 'end_date': end_date}
+               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid}
     try:
         filename = 'solicitacoes.xlsx'
         buffer = solicitacoes_xlsx(filters)
@@ -1042,6 +1043,36 @@ async def solicitations_export(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/visual_export")
+async def visual_export_route(
+    status: List[int] = Query(None, alias='status'),
+    naturalidade: Optional[str] = Query(None, alias='naturalidade'),
+    municipio: Optional[str] = Query(None, alias='municipio'),
+    cid: Optional[str] = Query(None, alias='cid'),
+    start_date: Optional[str] = Query(None, alias='start_date'),
+    end_date: Optional[str] = Query(None, alias='end_date'),
+    inicio: int = Query(...),
+    fim: int = Query(...)
+):
+    filters = {'status': status, 'naturalidade': naturalidade, 
+               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid ,'fim':fim, 'inicio':inicio}
+    result = visual_export(filters)
+    return {"response": serialize_visual_export(result)}
+
+@app.get("/count_visual_export")
+async def count_visual_export_route(
+    status: List[int] = Query(None, alias='status'),
+    naturalidade: Optional[str] = Query(None, alias='naturalidade'),
+    cid: Optional[str] = Query(None, alias='cid'),
+    municipio: Optional[str] = Query(None, alias='municipio'),
+    start_date: Optional[str] = Query(None, alias='start_date'),
+    end_date: Optional[str] = Query(None, alias='end_date')
+):
+    filters = {'status': status, 'naturalidade': naturalidade, 
+               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid}
+    count = count_visual_export(filters)
+    return {"response":serialize_count_visual_export(count)}
 
 # comentario
 @app.get("/valida_carteirinha_hashId")
@@ -1486,30 +1517,3 @@ async def testando():
         'response': 'funcionou'
     }
 
-@app.get("/visual_export")
-async def visual_export_route(
-    status: List[int] = Query(None, alias='status'),
-    naturalidade: Optional[str] = Query(None, alias='naturalidade'),
-    municipio: Optional[str] = Query(None, alias='municipio'),
-    start_date: Optional[str] = Query(None, alias='start_date'),
-    end_date: Optional[str] = Query(None, alias='end_date'),
-    inicio: int = Query(...),
-    fim: int = Query(...)
-):
-    filters = {'status': status, 'naturalidade': naturalidade, 
-               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'fim':fim, 'inicio':inicio}
-    result = visual_export(filters)
-    return {"response": serialize_visual_export(result)}
-
-@app.get("/count_visual_export")
-async def count_visual_export_route(
-    status: List[int] = Query(None, alias='status'),
-    naturalidade: Optional[str] = Query(None, alias='naturalidade'),
-    municipio: Optional[str] = Query(None, alias='municipio'),
-    start_date: Optional[str] = Query(None, alias='start_date'),
-    end_date: Optional[str] = Query(None, alias='end_date')
-):
-    filters = {'status': status, 'naturalidade': naturalidade, 
-               'municipio': municipio, 'start_date': start_date, 'end_date': end_date}
-    count = count_visual_export(filters)
-    return {"response":serialize_count_visual_export(count)}
