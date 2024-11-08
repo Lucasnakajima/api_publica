@@ -1109,7 +1109,8 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
     cursor.execute(query.format(condition=condition, condition_historico=condition_historico), params)
     requests = cursor.fetchall()
 
-    return requests
+    # Convertendo tuplas em instâncias de VisualExportResponse
+    return [VisualExportResponse(*req) for req in requests]  # Certifique-se de que VisualExportResponse tenha os atributos corretos
 
 def count_visual_export(filters: dict) -> int:
     query = Queries.get_count_visual_export
