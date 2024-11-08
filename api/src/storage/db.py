@@ -1041,6 +1041,9 @@ def solicitacoes_xlsx(filters:dict):
         condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
+    if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
+        condition_historico += "and carteira = '%s'"
+        params.append(filters['carteira'])
     if filters.get('cid'):
         cids = filters['cid'].split(',')
         condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
@@ -1090,6 +1093,9 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
         condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
+    if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
+        condition_historico += "and carteira = '%s'"
+        params.append(filters['carteira'])
 
     if filters.get('cid'):
         cids = filters['cid'].split(',')
@@ -1132,6 +1138,9 @@ def count_visual_export(filters: dict) -> int:
         condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
+    if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
+        condition_historico += "and carteira = '%s'"
+        params.append(filters['carteira'])
     
     if filters.get('cid'):
         cids = filters['cid'].split(',')
