@@ -800,7 +800,7 @@ class Queries(str, Enum):
     FormatDate(created_at),
     FormatDate(updated_at)
     FROM solicitacoes
-    WHERE alert_id IN (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {conditions_historico}) {conditions}
+    WHERE alert_id IN (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {condition_historico}) {conditions}
     ORDER BY created_at DESC;
     '''
 
