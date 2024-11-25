@@ -1566,6 +1566,14 @@ def insert_num_carteiras(projeto: str, cpf: str, alert_id: int, via: int):
         conn.commit()
         return {"success": True}
     
+    elif via == 2 and projeto.upper() == 'PCD':
+        query = Queries.insert_num_carteira_2_via_pcd
+        conn = get_conn()
+        cursor = conn.cursor()
+        cursor.execute(query, params_2_via)
+        conn.commit()
+        return {"success": True}
+    
     else:
         if projeto.upper() == 'PCD':
             query = Queries.insert_num_carteira_pcd

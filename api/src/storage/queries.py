@@ -941,6 +941,10 @@ class Queries(str, Enum):
     insert_num_carteira_2_via_ciptea = '''
             call sp_cria_via(%s, %s)
         '''
+    
+    insert_num_carteira_2_via_pcd = '''
+            call sp_cria_via_pcd(%s, %s)
+        '''
 
     count_by_project = '''
             select projeto, count(*) as total from dashboard group by projeto
