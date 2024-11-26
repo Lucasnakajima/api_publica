@@ -1026,11 +1026,12 @@ async def solicitations_export(
     municipio: Optional[str] = Query(None, alias='municipio'),
     cid: Optional[str] = Query(None, alias='cid'),
     carteira: Optional[str] = Query(None, alias='carteira'),
+    deficiencia: Optional[str] = Query(None, alias='deficiencia'),
     start_date: Optional[str] = Query(None, alias='start_date'),
     end_date: Optional[str] = Query(None, alias='end_date')
 ):
     filters = {'status': status, 'naturalidade': naturalidade, 
-               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid, 'carteira':carteira}
+               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid, 'carteira':carteira, 'deficiencia':deficiencia}
     try:
         filename = 'solicitacoes.xlsx'
         buffer = solicitacoes_xlsx(filters)
@@ -1051,6 +1052,7 @@ async def visual_export_route(
     naturalidade: Optional[str] = Query(None, alias='naturalidade'),
     municipio: Optional[str] = Query(None, alias='municipio'),
     cid: Optional[str] = Query(None, alias='cid'),
+    deficiencia: Optional[str] = Query(None, alias='deficiencia'),
     carteira: Optional[str] = Query(None, alias='carteira'),
     start_date: Optional[str] = Query(None, alias='start_date'),
     end_date: Optional[str] = Query(None, alias='end_date'),
@@ -1058,7 +1060,7 @@ async def visual_export_route(
     fim: int = Query(...)
 ):
     filters = {'status': status, 'naturalidade': naturalidade, 
-               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid, 'carteira':carteira,'fim':fim, 'inicio':inicio}
+               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid, 'carteira':carteira,'fim':fim, 'inicio':inicio, 'deficiencia':deficiencia}
     result = visual_export(filters)
     return {"response": serialize_visual_export(result)}
 
@@ -1069,11 +1071,12 @@ async def count_visual_export_route(
     cid: Optional[str] = Query(None, alias='cid'),
     municipio: Optional[str] = Query(None, alias='municipio'),
     carteira: Optional[str] = Query(None, alias='carteira'),
+    deficiencia: Optional[str] = Query(None, alias='deficiencia'),
     start_date: Optional[str] = Query(None, alias='start_date'),
     end_date: Optional[str] = Query(None, alias='end_date')
 ):
     filters = {'status': status, 'naturalidade': naturalidade, 
-               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid, 'carteira':carteira}
+               'municipio': municipio, 'start_date': start_date, 'end_date': end_date, 'cid':cid, 'carteira':carteira, 'deficiencia':deficiencia}
     count = count_visual_export(filters)
     return {"response":serialize_count_visual_export(count)}
 
