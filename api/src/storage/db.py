@@ -1059,6 +1059,11 @@ def solicitacoes_xlsx(filters:dict):
     if filters.get('naturalidade'):
         condition += " and municipios_naturalidade_meta LIKE %s"
         params.append('%' + filters['naturalidade'] + '%')
+    if filters.get('deficiencia'):
+        deficiencias = filters['deficiencia'].split(',')
+        deficiencias = [d.strip() for d in deficiencias]
+        condition += " and tipo_da_deficiencia_meta IN ({})".format(", ".join(["%s"] * len(deficiencias)))
+        params.extend(deficiencias)
     if filters.get('municipio'):
         condition += " and municipios_endereco_beneficiario_meta LIKE %s"
         params.append('%' + filters['municipio'] + '%')
@@ -1160,6 +1165,11 @@ def count_visual_export(filters: dict) -> int:
         params.append(filters['end_date'])
 
     # Condições restantes para a variável condition
+    if filters.get('deficiencia'):
+        deficiencias = filters['deficiencia'].split(',')
+        deficiencias = [d.strip() for d in deficiencias]
+        condition += " and tipo_da_deficiencia_meta IN ({})".format(", ".join(["%s"] * len(deficiencias)))
+        params.extend(deficiencias)
     if filters.get('naturalidade'):
         condition += " and municipios_naturalidade_meta LIKE %s"
         params.append('%' + filters['naturalidade'] + '%')
