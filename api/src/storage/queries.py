@@ -1107,7 +1107,7 @@ class Queries(str, Enum):
         IF(nome_do_pai_meta != '', CONCAT(', ', UPPER(nome_do_pai_meta)), '')
     ) AS filiacao, 
         UPPER(nome_responsavel_legal_do_beneficiario_meta), 
-        rg_responsavel_meta, 
+        json_unquote(json_extract(meta,_utf8mb4'$.meta.cpf_responsavel')) as rg_responsavel_meta, 
         email_meta, 
         telefone_responsavel_meta, 
         COALESCE(
