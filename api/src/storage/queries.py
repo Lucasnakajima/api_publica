@@ -800,7 +800,7 @@ class Queries(str, Enum):
     FormatDate(created_at),
     FormatDate(updated_at)
     FROM solicitacoes
-    WHERE alert_id IN (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {condition_historico}) {conditions}
+    WHERE 1=1 {conditions}
     ORDER BY created_at DESC;
     '''
 
@@ -1220,12 +1220,12 @@ class Queries(str, Enum):
     '''
 
     get_visual_export = '''
-        SELECT s.alert_id, benef_nome, channelId, statusId, municipios_endereco_beneficiario_meta, updated_at from solicitacoes s 
-        where s.alert_id in (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {condition_historico}) {condition}
+        SELECT s.alert_id, benef_nome, channelId, statusId, municipios_endereco_beneficiario_meta, tipo_da_deficiencia_meta, updated_at from solicitacoes s 
+        WHERE 1=1 {conditions}
         order by updated_at desc limit %s offset %s;
     '''
 
     get_count_visual_export = '''
         SELECT count(*) from solicitacoes s 
-        where s.alert_id in (SELECT DISTINCT alert_id FROM historico WHERE 1=1 {condition_historico}) {condition};
+        WHERE 1=1 {conditions}
     '''

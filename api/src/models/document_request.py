@@ -913,12 +913,13 @@ class StatusSolicitacao:
     self.channelId = channelId
 
 class VisualExportResponse:
-    def __init__(self, alert_id: int, benef_nome: str, channelId: int, statusId: int, municipios_endereco_beneficiario_meta: str, updated_at: str):
+    def __init__(self, alert_id: int, benef_nome: str, channelId: int, statusId: int, municipios_endereco_beneficiario_meta: str, tipo_da_deficiencia_meta: str,updated_at: str):
         self.alert_id = alert_id
         self.benef_nome = benef_nome
         self.channelId = channelId
         self.statusId = statusId
         self.municipios_endereco_beneficiario_meta = municipios_endereco_beneficiario_meta
+        self.tipo_da_deficiencia_meta = tipo_da_deficiencia_meta
         self.updated_at = updated_at
 
 # Função para serializar a contagem

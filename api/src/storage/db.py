@@ -1034,25 +1034,24 @@ def get_lote_xlsx(lote:int):
 def solicitacoes_xlsx(filters:dict):
     query = Queries.get_solicitacoes_xlsx
     params = []
-    condition = ''
-    condition_historico = ''  # Nova variável para condições do histórico
+    condition = ''  # Nova variável para condições do histórico
 
     if filters.get('status'):
-        condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
-        condition_historico += "and carteira = %s"
+        condition += "and Canal = %s"
         params.append(filters['carteira'])
     if filters.get('cid'):
         cids = filters['cid'].split(',')
         condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
         params.extend([f'%{cid.strip()}%' for cid in cids])
     if filters.get('start_date'):
-        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
 
     # Condições restantes para a variável condition
@@ -1070,7 +1069,7 @@ def solicitacoes_xlsx(filters:dict):
     
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition, condition_historico=condition_historico), params)
+    cursor.execute(query.format(conditions=condition), params)
     result = cursor.fetchall()
     df = pd.DataFrame(result)
 
@@ -1091,27 +1090,24 @@ def solicitacoes_xlsx(filters:dict):
 def visual_export(filters: dict) -> List[VisualExportResponse]:
     query = Queries.get_visual_export
     params = []
-    condition = ''
-    condition_historico = ''  # Nova variável para condições do histórico
+    condition = ''  # Nova variável para condições do histórico
 
     if filters.get('status'):
-        condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
-        condition_historico += "and carteira = %s"
+        condition += "and Canal = %s"
         params.append(filters['carteira'])
-
     if filters.get('cid'):
         cids = filters['cid'].split(',')
         condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
         params.extend([f'%{cid.strip()}%' for cid in cids])
-
     if filters.get('start_date'):
-        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
 
     # Condições restantes para a variável condition
@@ -1132,7 +1128,7 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
     
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(condition=condition, condition_historico=condition_historico), params)
+    cursor.execute(query.format(conditions=condition), params)
     requests = cursor.fetchall()
 
     # Convertendo tuplas em instâncias de VisualExportResponse
@@ -1141,45 +1137,42 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
 def count_visual_export(filters: dict) -> int:
     query = Queries.get_count_visual_export
     params = []
-    condition = ''
-    condition_historico = ''  # Nova variável para condições do histórico
+    condition = ''  # Nova variável para condições do histórico
 
     if filters.get('status'):
-        condition_historico += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
+        condition += " and statusId in ({})".format(", ".join(["%s"] * len(filters.get('status'))))
         for i in filters.get('status'):
             params.append(i)
     if filters.get('carteira') and len(filters['carteira'].split(',')) != 2:
-        condition_historico += "and carteira = %s"
+        condition += "and Canal = %s"
         params.append(filters['carteira'])
-    
     if filters.get('cid'):
         cids = filters['cid'].split(',')
         condition += " AND (" + " OR ".join([f'cid LIKE %s' for _ in cids]) + ")"
         params.extend([f'%{cid.strip()}%' for cid in cids])
-
     if filters.get('start_date'):
-        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
+        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s"
         params.append(filters['start_date'])
     if filters.get('end_date'):
-        condition_historico += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
+        condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
 
     # Condições restantes para a variável condition
+    if filters.get('naturalidade'):
+        condition += " and municipios_naturalidade_meta LIKE %s"
+        params.append('%' + filters['naturalidade'] + '%')
     if filters.get('deficiencia'):
         deficiencias = filters['deficiencia'].split(',')
         deficiencias = [d.strip() for d in deficiencias]
         condition += " and tipo_da_deficiencia_meta IN ({})".format(", ".join(["%s"] * len(deficiencias)))
         params.extend(deficiencias)
-    if filters.get('naturalidade'):
-        condition += " and municipios_naturalidade_meta LIKE %s"
-        params.append('%' + filters['naturalidade'] + '%')
     if filters.get('municipio'):
         condition += " and municipios_endereco_beneficiario_meta LIKE %s"
         params.append('%' + filters['municipio'] + '%')
     
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute(query.format(condition=condition, condition_historico=condition_historico), params)
+    cursor.execute(query.format(conditions=condition), params)
     count = cursor.fetchall()
 
     return [CountVisualExportResponse(*req) for req in count]

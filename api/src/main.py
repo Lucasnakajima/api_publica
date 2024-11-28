@@ -313,6 +313,7 @@ def serialize_visual_export(requests):
         "alert_id": r.alert_id,
         "benef_nome": r.benef_nome,
         "municipio": r.municipios_endereco_beneficiario_meta,
+        "deficiencia": r.tipo_da_deficiencia_meta,
         "statusId": r.statusId,
         "channelId": r.channelId,
         "updated_at": r.updated_at
