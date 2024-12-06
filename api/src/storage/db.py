@@ -293,7 +293,7 @@ def get_hash(filters: dict) -> List[HashRequest]:
         condition += 'and lower(local_de_retirada_meta) like %s'
         params.append('%'+ filters['local_de_retirada'] + '%')
     if filters.get('deficiencia'):
-        condition += 'and lower(tipo_da_deficiencia_meta) like %s'
+        condition += 'and lower(TRIM(tipo_da_deficiencia_meta)) like %s'
         params.append('%'+ filters['deficiencia'] + '%') 
     if filters.get('start_date'):
         condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) >= %s "
@@ -359,7 +359,7 @@ def get_count_cpf_hash(filters: dict) -> List[CountHashRequest]:
         condition += 'and lower(cid) like %s'
         params.append('%'+ filters['cid'] + '%')
     if filters.get('deficiencia'):
-        condition += 'and lower(tipo_da_deficiencia_meta) like %s'
+        condition += 'and lower(TRIM(tipo_da_deficiencia_meta)) like %s'
         params.append('%'+ filters['deficiencia'] + '%')
     if filters.get('start_date'):
         condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s "
@@ -484,7 +484,7 @@ def get_count_arquivados(filters: dict) -> List[CountHashRequest]:
         condition += 'and lower(local_de_retirada_meta) like %s'
         params.append('%'+ filters['local_de_retirada'] + '%')
     if filters.get('deficiencia'):
-        condition += 'and lower(tipo_da_deficiencia_meta) like %s'
+        condition += 'and lower(TRIM(tipo_da_deficiencia_meta)) like %s'
         params.append('%'+ filters['deficiencia'] + '%')
     if filters.get('start_date'):
         condition += " and DATE(CONVERT_TZ(created_at, '+00:00', '-04:00')) >= %s "
@@ -621,7 +621,7 @@ def get_solicitacoes(filters: dict) -> List[SolicitationRequest]:
         condition += " and lower(cid) like %s"
         params.append('%'+filters['cid']+'%')
     if filters.get('deficiencia'):
-        condition += " and lower(tipo_da_deficiencia_meta) like %s"
+        condition += " and lower(TRIM(tipo_da_deficiencia_meta)) like %s"
         params.append('%'+filters['deficiencia']+'%')
     if filters.get('local_retirada'):
         condition += " and lower(local_de_retirada_meta) like %s"
@@ -720,7 +720,7 @@ def get_count_solicitacoes(filters: dict) -> List[CountSolicitationRequest]:
         condition += " and lower(cid) like %s"
         params.append('%'+filters['cid']+'%')
     if filters.get('deficiencia'):
-        condition += " and lower(tipo_da_deficiencia_meta) like %s"
+        condition += " and lower(TRIM(tipo_da_deficiencia_meta)) like %s"
         params.append('%'+filters['deficiencia']+'%')
     if filters.get('local_retirada'):
         condition += " and lower(local_de_retirada_meta) like %s"
@@ -1064,7 +1064,7 @@ def solicitacoes_xlsx(filters:dict):
     if filters.get('deficiencia'):
         deficiencias = filters['deficiencia'].split(',')
         deficiencias = [d.strip() for d in deficiencias]
-        condition += " and tipo_da_deficiencia_meta IN ({})".format(", ".join(["%s"] * len(deficiencias)))
+        condition += " and TRIM(tipo_da_deficiencia_meta) IN ({})".format(", ".join(["%s"] * len(deficiencias)))
         params.extend(deficiencias)
     if filters.get('municipio'):
         condition += " and municipios_endereco_beneficiario_meta LIKE %s"
@@ -1123,7 +1123,7 @@ def visual_export(filters: dict) -> List[VisualExportResponse]:
     if filters.get('deficiencia'):
         deficiencias = filters['deficiencia'].split(',')
         deficiencias = [d.strip() for d in deficiencias]
-        condition += " and tipo_da_deficiencia_meta IN ({})".format(", ".join(["%s"] * len(deficiencias)))
+        condition += " and TRIM(tipo_da_deficiencia_meta) IN ({})".format(", ".join(["%s"] * len(deficiencias)))
         params.extend(deficiencias)
     if filters.get('municipio'):
         condition += " and municipios_endereco_beneficiario_meta LIKE %s"
@@ -1173,7 +1173,7 @@ def count_visual_export(filters: dict) -> int:
     if filters.get('deficiencia'):
         deficiencias = filters['deficiencia'].split(',')
         deficiencias = [d.strip() for d in deficiencias]
-        condition += " and tipo_da_deficiencia_meta IN ({})".format(", ".join(["%s"] * len(deficiencias)))
+        condition += " and TRIM(tipo_da_deficiencia_meta) IN ({})".format(", ".join(["%s"] * len(deficiencias)))
         params.extend(deficiencias)
     if filters.get('municipio'):
         condition += " and municipios_endereco_beneficiario_meta LIKE %s"
