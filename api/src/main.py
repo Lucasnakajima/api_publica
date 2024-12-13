@@ -436,6 +436,7 @@ def serialize_solicitation_by_hashId(requests):
        "doc_rg_responsavel_legal_verso_anexo": r.doc_rg_responsavel_legal_verso_anexo, 
        "doc_rg_responsavel_legal_frente_anexo": r.doc_rg_responsavel_legal_frente_anexo, 
        "doc_comprovante_endereco_responsavel_legal_anexo": r.doc_comprovante_endereco_responsavel_legal_anexo,
+       "biometria_do_beneficiario": r.biometria_do_beneficiario,
        "resp_email": r.resp_email,
        "sexo_beneficiario": r.sexo_beneficiario
     }for r in requests]

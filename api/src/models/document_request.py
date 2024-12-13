@@ -602,7 +602,8 @@ class SolicitationByhashId:
             self.doc_cpf_responsavel_legal_anexo,
             self.doc_rg_responsavel_legal_verso_anexo,
             self.doc_rg_responsavel_legal_frente_anexo,
-            self.doc_comprovante_endereco_responsavel_legal_anexo
+            self.doc_comprovante_endereco_responsavel_legal_anexo,
+            self.biometria_do_beneficiario
         ) = self._extract_attachments_info(attachments)
     self.resp_email = resp_email
     self.sexo_beneficiario = sexo_beneficiario
