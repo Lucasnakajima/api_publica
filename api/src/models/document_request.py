@@ -590,21 +590,22 @@ class SolicitationByhashId:
     self.statusId = statusId
     self.channelId = channelId
     self.cep_responsavel, self.bairro_responsavel, self.numero_responsavel, self.municipio_responsavel, self.rua_avenida_responsavel, self.endereco_do_responsavel = self._extract_data_endereco_responsavel(meta)
+    extracted_info = self._extract_attachments_info(attachments)
     (
-            self.doc_cid_laudo,
-            self.anexo_comprovacao_2via,
-            self.doc_cpf_do_beneficiario_anexo,
-            self.doc_rg_beneficiario_verso_anexo,
-            self.doc_comprovante_de_endereco_anexo,
-            self.doc_foto_3_x_4_beneficiario_anexo,
-            self.doc_rg_do_beneficiario_frente_anexo,
-            self.doc_curatela_anexo,
-            self.doc_cpf_responsavel_legal_anexo,
-            self.doc_rg_responsavel_legal_verso_anexo,
-            self.doc_rg_responsavel_legal_frente_anexo,
-            self.doc_comprovante_endereco_responsavel_legal_anexo,
-            self.biometria_do_beneficiario
-        ) = self._extract_attachments_info(attachments)
+        self.doc_cid_laudo,
+        self.anexo_comprovacao_2via,
+        self.doc_cpf_do_beneficiario_anexo,
+        self.doc_rg_beneficiario_verso_anexo,
+        self.doc_comprovante_de_endereco_anexo,
+        self.doc_foto_3_x_4_beneficiario_anexo,
+        self.doc_rg_do_beneficiario_frente_anexo,
+        self.doc_curatela_anexo,
+        self.doc_cpf_responsavel_legal_anexo,
+        self.doc_rg_responsavel_legal_verso_anexo,
+        self.doc_rg_responsavel_legal_frente_anexo,
+        self.doc_comprovante_endereco_responsavel_legal_anexo,
+        self.biometria_do_beneficiario
+    ) = extracted_info + (None,) * (13 - len(extracted_info))  # Preenche com None se necessário
     self.resp_email = resp_email
     self.sexo_beneficiario = sexo_beneficiario
        
