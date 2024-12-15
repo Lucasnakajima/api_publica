@@ -605,7 +605,7 @@ class SolicitationByhashId:
         self.doc_rg_responsavel_legal_frente_anexo,
         self.doc_comprovante_endereco_responsavel_legal_anexo,
         self.biometria_do_beneficiario
-    ) = extracted_info + (None,) * (13 - len(extracted_info))  # Preenche com None se necessário
+    ) = extracted_info
     self.resp_email = resp_email
     self.sexo_beneficiario = sexo_beneficiario
        
@@ -713,12 +713,16 @@ class SolicitationByhashId:
         doc_comprovante_endereco_responsavel_legal_anexo = meta_dict.get('doc_comprovante_endereco_responsavel_legal_anexo')
         if doc_comprovante_endereco_responsavel_legal_anexo != None:
           doc_comprovante_endereco_responsavel_legal_anexo = extract_attachments_images(doc_comprovante_endereco_responsavel_legal_anexo)
+
+        biometria_do_beneficiario = meta_dict.get('biometria_do_beneficiario')
+        if biometria_do_beneficiario != None:
+          biometria_do_beneficiario = extract_attachments_images(biometria_do_beneficiario)
        
         # Verifica se algum dos valores é vazio e substitui por None
-        if any(value == '' for value in (doc_cid_laudo, anexo_comprovacao_2via, doc_cpf_do_beneficiario_anexo, doc_rg_beneficiario_verso_anexo, doc_comprovante_de_endereco_anexo, doc_foto_3_x_4_beneficiario_anexo, doc_rg_do_beneficiario_frente_anexo, doc_curatela_anexo, doc_cpf_responsavel_legal_anexo, doc_rg_responsavel_legal_verso_anexo, doc_rg_responsavel_legal_frente_anexo, doc_comprovante_endereco_responsavel_legal_anexo)):
+        if any(value == '' for value in (doc_cid_laudo, anexo_comprovacao_2via, doc_cpf_do_beneficiario_anexo, doc_rg_beneficiario_verso_anexo, doc_comprovante_de_endereco_anexo, doc_foto_3_x_4_beneficiario_anexo, doc_rg_do_beneficiario_frente_anexo, doc_curatela_anexo, doc_cpf_responsavel_legal_anexo, doc_rg_responsavel_legal_verso_anexo, doc_rg_responsavel_legal_frente_anexo, doc_comprovante_endereco_responsavel_legal_anexo, biometria_do_beneficiario)):
             return (None, None, None, None, None, None, None, None, None, None, None, None)
         
-        return (doc_cid_laudo, anexo_comprovacao_2via, doc_cpf_do_beneficiario_anexo, doc_rg_beneficiario_verso_anexo, doc_comprovante_de_endereco_anexo, doc_foto_3_x_4_beneficiario_anexo, doc_rg_do_beneficiario_frente_anexo, doc_curatela_anexo, doc_cpf_responsavel_legal_anexo, doc_rg_responsavel_legal_verso_anexo, doc_rg_responsavel_legal_frente_anexo, doc_comprovante_endereco_responsavel_legal_anexo)
+        return (doc_cid_laudo, anexo_comprovacao_2via, doc_cpf_do_beneficiario_anexo, doc_rg_beneficiario_verso_anexo, doc_comprovante_de_endereco_anexo, doc_foto_3_x_4_beneficiario_anexo, doc_rg_do_beneficiario_frente_anexo, doc_curatela_anexo, doc_cpf_responsavel_legal_anexo, doc_rg_responsavel_legal_verso_anexo, doc_rg_responsavel_legal_frente_anexo, doc_comprovante_endereco_responsavel_legal_anexo, biometria_do_beneficiario)
     except Exception as e:
         print(f"Erro ao extrair informações dos anexos: {e}")
         return (None, None, None, None, None, None, None, None, None, None, None, None)
