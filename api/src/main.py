@@ -612,6 +612,7 @@ def serialize_status_solicitacao(solicitacao):
         'statusId': solicitacao.statusId,
         'alert_id': solicitacao.alert_id,
         'channelId': solicitacao.channelId,
+        'motivo_reprovado': solicitacao.motivo_reprovado,
     }
 
 @app.get("/requests")
