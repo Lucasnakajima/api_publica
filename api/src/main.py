@@ -1310,11 +1310,13 @@ async def patch_solicitacoes_teste(
         statusId: int,
         auditor: str,
         motivo_reprovado: Optional[str] = Query(None, alias='motivo_reprovado'),
+        comentario_beneficiario: Optional[str] = Query(None, alias='comentario_beneficiario'),
         meta: Optional[dict] = Body(None, alias='meta')                                
 ):
     
     try:
-        update_solicitacoes_teste(alert_id, statusId, auditor, motivo_reprovado, parameters=meta)
+        update_solicitacoes_teste(alert_id, statusId, auditor, motivo_reprovado, comentario_beneficiario,
+                                   parameters=meta)
         
         return {"success": True}
     except Exception as e:
