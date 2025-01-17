@@ -1457,7 +1457,7 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
     conn.commit()
     return {"success": True}
 
-def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo_reprovado: str,parameters: dict):
+def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo_reprovado: str, comentario_beneficiario: str, parameters: dict):
     
     # Esta parte serve para buscar as chaves que existem dentro do meta do alert no database
     requests = get_solicitation_meta_by_alert_id(alert_id)
@@ -1471,9 +1471,16 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
     params.append(auditor)
     
     # Esta parte serve para atualizar os campos que estão fora do meta
+    if statusId == 33:
+        condition+= '''tag_recurso = TRUE, '''
+
     if motivo_reprovado:
         condition+= '''motivo_reprovado = %s ,'''
         params.append(motivo_reprovado)
+
+    if comentario_beneficiario:
+            condition+= '''comentario_beneficiario = %s ,'''
+            params.append(comentario_beneficiario)
 
     if "nome_do_beneficiario" in parameters.keys():
         condition+= '''benef_nome = %s ,'''
