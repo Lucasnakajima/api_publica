@@ -1457,97 +1457,75 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
 def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, 
                               motivo_reprovado: str, comentario_beneficiario: str, 
                               parameters: dict, keys: list = None, values: list = None):
-    
-    # Esta parte serve para buscar as chaves que existem dentro do meta do alert no database
     requests = get_solicitation_meta_by_alert_id(alert_id)
     data = SolicitationMetaByAlertId.serialize_meta(requests=requests)
     keys_validates = json.loads(data[0]['meta']).keys()
     
     query = Queries.update_solicitacoes_teste
-    condition = ""
-    params = []
-    params.append(statusId)
-    params.append(auditor)
+    condition = []
+    params = [statusId, auditor]
     
-    # Esta parte serve para atualizar os campos que estão fora do meta
+    # Atualizando campos fora do meta
     if statusId == 33:
-        condition+= ''', tag_recurso = true'''
+        condition.append('tag_recurso = true')
 
     if motivo_reprovado:
-        condition+= ''', motivo_reprovado = %s'''
+        condition.append('motivo_reprovado = %s')
         params.append(motivo_reprovado)
 
     if comentario_beneficiario:
-            condition+= ''', comentario_beneficiario = %s'''
-            params.append(comentario_beneficiario)
+        condition.append('comentario_beneficiario = %s')
+        params.append(comentario_beneficiario)
 
-    if parameters:        
+    # Atualizando parâmetros adicionais
+    if parameters:
+        field_map = {
+            "nome_do_beneficiario": "benef_nome",
+            "rg_beneficiario": "benef_rg",
+            "data_de_nascimento_beneficiario": lambda v: datetime.strptime(v, '%d/%m/%Y').date().isoformat(),
+            "cid_beneficiario": "cid",
+            "tipo_sanguineo_beneficiario": "fator_rh",
+            "nome_do_responsavel_legal_beneficiario": "resp_nome",
+            "nome_responsavel_legal_do_beneficiario": "resp_nome",
+            "rg_responsavel": "resp_rg"
+        }
 
-        if "nome_do_beneficiario" in parameters.keys():
-            condition+= ''', benef_nome = %s'''
-            params.append(parameters.get('nome_do_beneficiario'))
-
-        if "rg_beneficiario" in parameters.keys():
-            condition+= ''', benef_rg = %s'''
-            params.append(parameters.get('rg_beneficiario'))
-
-        if "data_de_nascimento_beneficiario" in parameters.keys():
-            condition+= ''', benef_data_nasc = %s'''
-            params.append(datetime.strptime(parameters.get('data_de_nascimento_beneficiario'), '%d/%m/%Y').date().isoformat())
-
-        if "cid_beneficiario" in parameters.keys():
-            condition+= ''', cid = %s'''
-            params.append(parameters.get('cid_beneficiario'))
-
-        if "tipo_sanguineo_beneficiario" in parameters.keys():
-            condition+=''', fator_rh = %s'''
-            params.append(parameters.get('tipo_sanguineo_beneficiario'))
-
-        if "nome_do_responsavel_legal_beneficiario" or "nome_responsavel_legal_do_beneficiario" in parameters.keys():
-            condition+=''', resp_nome = %s'''
-            if 'nome_do_responsavel_legal_beneficiario' in parameters.keys():
-                params.append(parameters.get('nome_do_responsavel_legal_beneficiario'))
-            else:
-                params.append(parameters.get('nome_responsavel_legal_do_beneficiario'))
-
-        if "rg_responsavel" in parameters.keys():
-            condition+=''', resp_rg = %s'''
-            params.append(parameters.get('rg_responsavel'))
-
-        # Esta parte serve para verificar o que existe dentro do meta e fazer o update dos campos que existem
-        keys_used = []
-        index_used = []
-        for index, key in enumerate(parameters.keys()):
-            if key in keys_validates:
-                keys_used.append(key)
-                index_used.append(index)
-        for chave in keys_used:
-            condition+= ''', meta = JSON_SET(meta, '$.{}', %s)'''.format(chave)
-        for indexf, value in enumerate(parameters.values()):
-            if indexf in index_used:
+        for key, db_field in field_map.items():
+            if key in parameters:
+                condition.append(f"{db_field} = %s")
+                value = parameters[key]
+                if callable(db_field):
+                    value = db_field(value)
                 params.append(value)
 
-    # Implementação para atualizar a coluna 'attachments_recurso' com keys e values
-    if keys and values:
-        if keys and values and len(keys) == len(values):
-            current_attachments = json.loads(data[0].get('attachments_recurso', '{}')) if data and data[0].get('attachments_recurso') else {}
-            
-            for key, value in zip(keys, values):
-                current_attachments[key] = value
+        keys_used = [key for key in parameters.keys() if key in keys_validates]
+        for chave in keys_used:
+            condition.append(f"meta = JSON_SET(meta, '$.{chave}', %s)")
+            params.append(parameters[chave])
 
-            updated_attachments = json.dumps(current_attachments)
-            condition += ''', attachments_recurso = %s'''
-            params.append(updated_attachments)
+    # Atualizando 'attachments_recurso'
+    if keys and values:
+        current_attachments = json.loads(data[0].get('attachments_recurso', '{}')) if data and data[0].get('attachments_recurso') else {}
+        for key, value in zip(keys, values):
+            current_attachments[key] = value
+        condition.append('attachments_recurso = %s')
+        params.append(json.dumps(current_attachments))
 
     params.append(alert_id)
 
-    condition_strip = condition.strip(',')    
-    
-    conn = get_conn()
-    cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition_strip),params)
-    conn.commit()
-    return {"success": True}
+    # Construir query final
+    condition_clause = ', '.join(condition)
+    final_query = query.format(conditions=condition_clause)
+
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
+        cursor.execute(final_query, params)
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        print(f"Erro ao executar query: {final_query} com params {params}")
+        raise e
 
 
 def insert_historicos(
