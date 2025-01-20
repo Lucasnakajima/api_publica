@@ -1457,7 +1457,9 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
     conn.commit()
     return {"success": True}
 
-def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo_reprovado: str, comentario_beneficiario: str, parameters: dict, keys: list = None, values: list = None):
+def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo_reprovado: str, 
+                              comentario_beneficiario: str, parameters: dict, keys: list = None, 
+                              values: list = None):
     
     # Esta parte serve para buscar as chaves que existem dentro do meta do alert no database
     requests = get_solicitation_meta_by_alert_id(alert_id)
