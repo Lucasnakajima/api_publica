@@ -1471,7 +1471,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
     
     # Esta parte serve para atualizar os campos que estão fora do meta
     if statusId == 33:
-        condition+= ''', tag_recurso = TRUE'''
+        condition+= ''', tag_recurso = true'''
 
     if motivo_reprovado:
         condition+= ''', motivo_reprovado = %s'''
