@@ -884,7 +884,7 @@ class Queries(str, Enum):
     '''
 
     update_solicitacoes_teste = '''
-            update solicitacoes set statusId = %s, auditor = %s, {conditions} where alert_id = %s;
+            update solicitacoes set statusId = %s, auditor = %s {conditions} where alert_id = %s;
         '''
 
     insert_historico = '''
