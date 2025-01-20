@@ -1457,9 +1457,8 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
     conn.commit()
     return {"success": True}
 
-def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo_reprovado: str, 
-                              comentario_beneficiario: str, parameters: dict, keys: list = None, 
-                              values: list = None):
+def update_solicitacoes_teste(alert_id: int, statusId: int, 
+                              auditor: str, motivo_reprovado: str, parameters: dict):
     
     # Esta parte serve para buscar as chaves que existem dentro do meta do alert no database
     requests = get_solicitation_meta_by_alert_id(alert_id)
@@ -1473,16 +1472,9 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
     params.append(auditor)
     
     # Esta parte serve para atualizar os campos que estão fora do meta
-    if statusId == 33:
-        condition+= '''tag_recurso = TRUE, '''
-
     if motivo_reprovado:
         condition+= '''motivo_reprovado = %s ,'''
         params.append(motivo_reprovado)
-
-    if comentario_beneficiario:
-            condition+= '''comentario_beneficiario = %s ,'''
-            params.append(comentario_beneficiario)
 
     if "nome_do_beneficiario" in parameters.keys():
         condition+= '''benef_nome = %s ,'''
@@ -1527,17 +1519,6 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
     for indexf, value in enumerate(parameters.values()):
         if indexf in index_used:
             params.append(value)
-
-    # Implementação para atualizar a coluna 'attachments_recurso' com keys e values
-    if keys and values and len(keys) == len(values):
-        current_attachments = json.loads(data[0].get('attachments_recurso', '{}')) if data and data[0].get('attachments_recurso') else {}
-        
-        for key, value in zip(keys, values):
-            current_attachments[key] = value
-
-        updated_attachments = json.dumps(current_attachments)
-        condition += '''attachments_recurso = %s ,'''
-        params.append(updated_attachments)
 
     params.append(alert_id)
 
