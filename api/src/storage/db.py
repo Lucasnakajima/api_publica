@@ -1528,7 +1528,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
                 params.append(value)
 
     # Implementação para atualizar a coluna 'attachments_recurso' com keys e values
-    if len(keys) > 0 and len(values) > 0:
+    if keys and values:
         if keys and values and len(keys) == len(values):
             current_attachments = json.loads(data[0].get('attachments_recurso', '{}')) if data and data[0].get('attachments_recurso') else {}
             
