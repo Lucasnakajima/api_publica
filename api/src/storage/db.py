@@ -11,6 +11,8 @@ import pandas as pd
 import mysql.connector
 import boto3
 
+#teste
+
 
 
 secret_arn = os.environ['SECRET_ARN']
