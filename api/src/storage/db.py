@@ -1,19 +1,17 @@
-from typing import List
-import json
-import requests
-import pandas as pd
-
-import mysql.connector
-
 from models import *
-
 from .queries import Queries
+from typing import List, Dict, Any
+import json
+from datetime import datetime
 import uuid
 import io
-import boto3
 import os
+import requests
+import pandas as pd
+import mysql.connector
+import boto3
 
-from datetime import datetime
+
 
 secret_arn = os.environ['SECRET_ARN']
 secrets_manager = boto3.client('secretsmanager', region_name="sa-east-1")
