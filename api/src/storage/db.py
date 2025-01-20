@@ -1515,11 +1515,16 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
 
     # Construir query final
     condition_clause = ', '.join(condition)
-    final_query = query.format(conditions=condition_clause)
+    if condition_clause:  # Certifique-se de que há condições antes de concatenar
+        final_query = query.format(conditions=', ' + condition_clause)
+    else:
+        final_query = query.format(conditions='')
 
     try:
         conn = get_conn()
         cursor = conn.cursor()
+        print(f"Query: {final_query}")
+        print(f"Params: {params}")
         cursor.execute(final_query, params)
         conn.commit()
         return {"success": True}
