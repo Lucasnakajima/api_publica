@@ -1469,7 +1469,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
     
     # Esta parte serve para atualizar os campos que estão fora do meta
     if motivo_reprovado:
-        condition+= '''motivo_reprovado = %s ,'''
+        condition+= ''',motivo_reprovado = %s ,'''
         params.append(motivo_reprovado)
 
     if parameters:
