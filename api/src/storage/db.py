@@ -11,10 +11,6 @@ import pandas as pd
 import mysql.connector
 import boto3
 
-#teste
-
-
-
 secret_arn = os.environ['SECRET_ARN']
 secrets_manager = boto3.client('secretsmanager', region_name="sa-east-1")
 
@@ -1476,49 +1472,51 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
         condition+= '''motivo_reprovado = %s ,'''
         params.append(motivo_reprovado)
 
-    if "nome_do_beneficiario" in parameters.keys():
-        condition+= '''benef_nome = %s ,'''
-        params.append(parameters.get('nome_do_beneficiario'))
+    if parameters:
+    
+        if "nome_do_beneficiario" in parameters.keys():
+            condition+= '''benef_nome = %s ,'''
+            params.append(parameters.get('nome_do_beneficiario'))
 
-    if "rg_beneficiario" in parameters.keys():
-        condition+= '''benef_rg = %s ,'''
-        params.append(parameters.get('rg_beneficiario'))
+        if "rg_beneficiario" in parameters.keys():
+            condition+= '''benef_rg = %s ,'''
+            params.append(parameters.get('rg_beneficiario'))
 
-    if "data_de_nascimento_beneficiario" in parameters.keys():
-        condition+= '''benef_data_nasc = %s ,'''
-        params.append(datetime.strptime(parameters.get('data_de_nascimento_beneficiario'), '%d/%m/%Y').date().isoformat())
+        if "data_de_nascimento_beneficiario" in parameters.keys():
+            condition+= '''benef_data_nasc = %s ,'''
+            params.append(datetime.strptime(parameters.get('data_de_nascimento_beneficiario'), '%d/%m/%Y').date().isoformat())
 
-    if "cid_beneficiario" in parameters.keys():
-         condition+= '''cid = %s ,'''
-         params.append(parameters.get('cid_beneficiario'))
+        if "cid_beneficiario" in parameters.keys():
+            condition+= '''cid = %s ,'''
+            params.append(parameters.get('cid_beneficiario'))
 
-    if "tipo_sanguineo_beneficiario" in parameters.keys():
-        condition+='''fator_rh = %s,'''
-        params.append(parameters.get('tipo_sanguineo_beneficiario'))
+        if "tipo_sanguineo_beneficiario" in parameters.keys():
+            condition+='''fator_rh = %s,'''
+            params.append(parameters.get('tipo_sanguineo_beneficiario'))
 
-    if "nome_do_responsavel_legal_beneficiario" or "nome_responsavel_legal_do_beneficiario" in parameters.keys():
-        condition+='''resp_nome = %s,'''
-        if 'nome_do_responsavel_legal_beneficiario' in parameters.keys():
-            params.append(parameters.get('nome_do_responsavel_legal_beneficiario'))
-        else:
-            params.append(parameters.get('nome_responsavel_legal_do_beneficiario'))
+        if "nome_do_responsavel_legal_beneficiario" or "nome_responsavel_legal_do_beneficiario" in parameters.keys():
+            condition+='''resp_nome = %s,'''
+            if 'nome_do_responsavel_legal_beneficiario' in parameters.keys():
+                params.append(parameters.get('nome_do_responsavel_legal_beneficiario'))
+            else:
+                params.append(parameters.get('nome_responsavel_legal_do_beneficiario'))
 
-    if "rg_responsavel" in parameters.keys():
-        condition+='''resp_rg = %s,'''
-        params.append(parameters.get('rg_responsavel'))
+        if "rg_responsavel" in parameters.keys():
+            condition+='''resp_rg = %s,'''
+            params.append(parameters.get('rg_responsavel'))
 
-    # Esta parte serve para verificar o que existe dentro do meta e fazer o update dos campos que existem
-    keys_used = []
-    index_used = []
-    for index, key in enumerate(parameters.keys()):
-        if key in keys_validates:
-            keys_used.append(key)
-            index_used.append(index)
-    for chave in keys_used:
-        condition+= '''meta = JSON_SET(meta, '$.{}', %s) ,'''.format(chave)
-    for indexf, value in enumerate(parameters.values()):
-        if indexf in index_used:
-            params.append(value)
+        # Esta parte serve para verificar o que existe dentro do meta e fazer o update dos campos que existem
+        keys_used = []
+        index_used = []
+        for index, key in enumerate(parameters.keys()):
+            if key in keys_validates:
+                keys_used.append(key)
+                index_used.append(index)
+        for chave in keys_used:
+            condition+= '''meta = JSON_SET(meta, '$.{}', %s) ,'''.format(chave)
+        for indexf, value in enumerate(parameters.values()):
+            if indexf in index_used:
+                params.append(value)
 
     params.append(alert_id)
 
