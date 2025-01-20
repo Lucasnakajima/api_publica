@@ -1310,19 +1310,12 @@ async def patch_solicitacoes_teste(
         statusId: int,
         auditor: str,
         motivo_reprovado: Optional[str] = Query(None, alias='motivo_reprovado'),
-        comentario_beneficiario: Optional[str] = Query(None, alias='comentario_beneficiario'),
-        meta: Optional[dict] = Body(None, alias='meta'),
-        keys: Optional[List[str]] = Query(None, alias='keys'),
-        values: Optional[List[str]] = Query(None, alias='values'),                                
+        meta: Optional[dict] = Body(None, alias='meta')                                
 ):
-    if keys and values and len(keys) != len(values):
-        return {"error": "The number of keys must match the number of values."}
-
+    
     try:
-        update_solicitacoes_teste(
-            alert_id, statusId, auditor, motivo_reprovado, 
-            comentario_beneficiario, meta, keys, values
-        )
+        update_solicitacoes_teste(alert_id, statusId, auditor, motivo_reprovado, parameters=meta)
+        
         return {"success": True}
     except Exception as e:
         raise e
