@@ -1454,7 +1454,9 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
     return {"success": True}
 
 
-def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo_reprovado: str,parameters: dict):
+def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, 
+                              motivo_reprovado: str, comentario_beneficiario: str, 
+                              parameters: dict, keys: list = None, values: list = None):
     
     # Esta parte serve para buscar as chaves que existem dentro do meta do alert no database
     requests = get_solicitation_meta_by_alert_id(alert_id)
@@ -1468,41 +1470,48 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
     params.append(auditor)
     
     # Esta parte serve para atualizar os campos que estão fora do meta
+    if statusId == 33:
+        condition+= ''', tag_recurso = TRUE'''
+
     if motivo_reprovado:
-        condition+= ''',motivo_reprovado = %s ,'''
+        condition+= ''', motivo_reprovado = %s'''
         params.append(motivo_reprovado)
 
-    if parameters:
-    
+    if comentario_beneficiario:
+            condition+= ''', comentario_beneficiario = %s'''
+            params.append(comentario_beneficiario)
+
+    if parameters:        
+
         if "nome_do_beneficiario" in parameters.keys():
-            condition+= '''benef_nome = %s ,'''
+            condition+= ''', benef_nome = %s'''
             params.append(parameters.get('nome_do_beneficiario'))
 
         if "rg_beneficiario" in parameters.keys():
-            condition+= '''benef_rg = %s ,'''
+            condition+= ''', benef_rg = %s'''
             params.append(parameters.get('rg_beneficiario'))
 
         if "data_de_nascimento_beneficiario" in parameters.keys():
-            condition+= '''benef_data_nasc = %s ,'''
+            condition+= ''', benef_data_nasc = %s'''
             params.append(datetime.strptime(parameters.get('data_de_nascimento_beneficiario'), '%d/%m/%Y').date().isoformat())
 
         if "cid_beneficiario" in parameters.keys():
-            condition+= '''cid = %s ,'''
+            condition+= ''', cid = %s'''
             params.append(parameters.get('cid_beneficiario'))
 
         if "tipo_sanguineo_beneficiario" in parameters.keys():
-            condition+='''fator_rh = %s,'''
+            condition+=''', fator_rh = %s'''
             params.append(parameters.get('tipo_sanguineo_beneficiario'))
 
         if "nome_do_responsavel_legal_beneficiario" or "nome_responsavel_legal_do_beneficiario" in parameters.keys():
-            condition+='''resp_nome = %s,'''
+            condition+=''', resp_nome = %s'''
             if 'nome_do_responsavel_legal_beneficiario' in parameters.keys():
                 params.append(parameters.get('nome_do_responsavel_legal_beneficiario'))
             else:
                 params.append(parameters.get('nome_responsavel_legal_do_beneficiario'))
 
         if "rg_responsavel" in parameters.keys():
-            condition+='''resp_rg = %s,'''
+            condition+=''', resp_rg = %s'''
             params.append(parameters.get('rg_responsavel'))
 
         # Esta parte serve para verificar o que existe dentro do meta e fazer o update dos campos que existem
@@ -1513,10 +1522,22 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
                 keys_used.append(key)
                 index_used.append(index)
         for chave in keys_used:
-            condition+= '''meta = JSON_SET(meta, '$.{}', %s) ,'''.format(chave)
+            condition+= ''', meta = JSON_SET(meta, '$.{}', %s)'''.format(chave)
         for indexf, value in enumerate(parameters.values()):
             if indexf in index_used:
                 params.append(value)
+
+    # Implementação para atualizar a coluna 'attachments_recurso' com keys e values
+    if len(keys) > 0 and len(values) > 0:
+        if keys and values and len(keys) == len(values):
+            current_attachments = json.loads(data[0].get('attachments_recurso', '{}')) if data and data[0].get('attachments_recurso') else {}
+            
+            for key, value in zip(keys, values):
+                current_attachments[key] = value
+
+            updated_attachments = json.dumps(current_attachments)
+            condition += ''', attachments_recurso = %s'''
+            params.append(updated_attachments)
 
     params.append(alert_id)
 
@@ -1527,6 +1548,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, motivo
     cursor.execute(query.format(conditions=condition_strip),params)
     conn.commit()
     return {"success": True}
+
 
 def insert_historicos(
         alert_id: int,
