@@ -1457,78 +1457,73 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
     conn.commit()
     return {"success": True}
 
-def update_solicitacoes_teste(alert_id: int, statusId: int, 
-                              auditor: str, motivo_reprovado: str, parameters: dict):
-    
-    # Esta parte serve para buscar as chaves que existem dentro do meta do alert no database
-    requests = get_solicitation_meta_by_alert_id(alert_id)
-    data = SolicitationMetaByAlertId.serialize_meta(requests=requests)
-    keys_validates = json.loads(data[0]['meta']).keys()
-    
-    query = Queries.update_solicitacoes_teste
-    condition = ""
-    params = []
-    params.append(statusId)
-    params.append(auditor)
-    
-    # Esta parte serve para atualizar os campos que estão fora do meta
-    if motivo_reprovado:
-        condition+= '''motivo_reprovado = %s ,'''
-        params.append(motivo_reprovado)
+def update_solicitacoes_teste(alert_id: int, status_id: int, 
+                              auditor: str, motivo_reprovado: Optional[str] = None, 
+                              parameters: Optional[Dict[str, Any]] = None):
+    try:
+        # Buscar metadados existentes
+        requests = get_solicitation_meta_by_alert_id(alert_id)
+        if not requests:
+            raise ValueError(f"Alerta com ID {alert_id} não encontrado.")
+        
+        data = SolicitationMetaByAlertId.serialize_meta(requests=requests)
+        keys_validates = json.loads(data[0]['meta']).keys()
 
-    if "nome_do_beneficiario" in parameters.keys():
-        condition+= '''benef_nome = %s ,'''
-        params.append(parameters.get('nome_do_beneficiario'))
+        # Inicializar condições e parâmetros da query
+        condition = []
+        params = [status_id, auditor]
 
-    if "rg_beneficiario" in parameters.keys():
-        condition+= '''benef_rg = %s ,'''
-        params.append(parameters.get('rg_beneficiario'))
+        # Atualizar campos fora do meta
+        if motivo_reprovado:
+            condition.append("motivo_reprovado = %s")
+            params.append(motivo_reprovado)
 
-    if "data_de_nascimento_beneficiario" in parameters.keys():
-        condition+= '''benef_data_nasc = %s ,'''
-        params.append(datetime.strptime(parameters.get('data_de_nascimento_beneficiario'), '%d/%m/%Y').date().isoformat())
+        # Verificar se meta foi informado e processar campos
+        if parameters:
+            field_mappings = {
+                "nome_do_beneficiario": "benef_nome",
+                "rg_beneficiario": "benef_rg",
+                "data_de_nascimento_beneficiario": lambda val: datetime.strptime(val, '%d/%m/%Y').date().isoformat(),
+                "cid_beneficiario": "cid",
+                "tipo_sanguineo_beneficiario": "fator_rh",
+                "nome_do_responsavel_legal_beneficiario": "resp_nome",
+                "nome_responsavel_legal_do_beneficiario": "resp_nome",
+                "rg_responsavel": "resp_rg"
+            }
 
-    if "cid_beneficiario" in parameters.keys():
-         condition+= '''cid = %s ,'''
-         params.append(parameters.get('cid_beneficiario'))
+            for key, db_field in field_mappings.items():
+                if key in parameters:
+                    condition.append(f"{db_field} = %s")
+                    value = parameters[key] if not callable(db_field) else db_field(parameters[key])
+                    params.append(value)
 
-    if "tipo_sanguineo_beneficiario" in parameters.keys():
-        condition+='''fator_rh = %s,'''
-        params.append(parameters.get('tipo_sanguineo_beneficiario'))
+            # Atualizar campos dentro do meta
+            for key, value in parameters.items():
+                if key in keys_validates:
+                    condition.append(f"meta = JSON_SET(meta, '$.{key}', %s)")
+                    params.append(value)
 
-    if "nome_do_responsavel_legal_beneficiario" or "nome_responsavel_legal_do_beneficiario" in parameters.keys():
-        condition+='''resp_nome = %s,'''
-        if 'nome_do_responsavel_legal_beneficiario' in parameters.keys():
-            params.append(parameters.get('nome_do_responsavel_legal_beneficiario'))
-        else:
-            params.append(parameters.get('nome_responsavel_legal_do_beneficiario'))
+        # Montar query final
+        query = Queries.update_solicitacoes_teste.format(conditions=", ".join(condition))
+        params.append(alert_id)
 
-    if "rg_responsavel" in parameters.keys():
-        condition+='''resp_rg = %s,'''
-        params.append(parameters.get('rg_responsavel'))
+        # Executar query no banco de dados
+        conn = get_conn()
+        cursor = conn.cursor()
 
-    # Esta parte serve para verificar o que existe dentro do meta e fazer o update dos campos que existem
-    keys_used = []
-    index_used = []
-    for index, key in enumerate(parameters.keys()):
-        if key in keys_validates:
-            keys_used.append(key)
-            index_used.append(index)
-    for chave in keys_used:
-        condition+= '''meta = JSON_SET(meta, '$.{}', %s) ,'''.format(chave)
-    for indexf, value in enumerate(parameters.values()):
-        if indexf in index_used:
-            params.append(value)
+        cursor.execute(query, params)
+        conn.commit()
 
-    params.append(alert_id)
+        return {"success": True}
 
-    condition_strip = condition.strip(',')    
-    
-    conn = get_conn()
-    cursor = conn.cursor()
-    cursor.execute(query.format(conditions=condition_strip),params)
-    conn.commit()
-    return {"success": True}
+    except Exception as e:
+        # Log do erro para facilitar o debug
+        print(f"Erro ao atualizar solicitações de teste: {e}")
+        raise
+    finally:
+        # Fechar a conexão de forma segura
+        if 'conn' in locals():
+            conn.close()
 
 def insert_historicos(
         alert_id: int,
