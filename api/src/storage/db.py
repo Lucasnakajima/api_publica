@@ -1542,24 +1542,17 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
             params.append(parameters[chave])
 
 
-    # Atualizando 'attachments_recurso'
-    # Atualizando 'attachments_recurso'
-    if keys and values:
-        # Obter o JSON atual de 'attachments_recurso' ou criar um novo dicionário vazio
-        current_attachments = (
-            json.loads(data[0].get('attachments_recurso', '{}'))
-            if data and data[0].get('attachments_recurso') else {}
-        )
+   # Atualizando 'attachments_recurso' com JSON_SET
+    if keys and values and len(keys) == 1 and len(values) == 1:
+        # Obter a nova chave e valor a serem inseridos
+        new_key = keys[0]
+        new_value = values[0]
 
-        # Atualizar ou adicionar apenas novas chaves e valores sem sobrescrever os existentes
-        for key, value in zip(keys, values):
-            if key not in current_attachments:
-                current_attachments[key] = value  # Adicionar apenas se a chave não existir
+        # Construir a condição SQL usando JSON_SET
+        condition.append("attachments_recurso = JSON_SET(COALESCE(attachments_recurso, '{}'), %s, %s)")
+        params.append(f"$.{new_key}")  # Caminho da chave no JSON
+        params.append(new_value)      # Valor a ser inserido
 
-        # Convertendo o dicionário atualizado de volta para JSON
-        updated_attachments = json.dumps(current_attachments)
-        condition.append('attachments_recurso = %s')
-        params.append(updated_attachments)
 
     params.append(alert_id)
 
