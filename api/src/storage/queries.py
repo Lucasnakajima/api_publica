@@ -27,7 +27,7 @@ class Queries(str, Enum):
             UPPER(REPLACE(municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
             UPPER(REPLACE(municipios_endereco_beneficiario_meta, '_', ' ')) AS municipios_endereco_beneficiario_meta, 
             meta, attachments, statusId, channelId, 
-            tipo_carteira, external_id, created_at, updated_at
+            tipo_carteira, external_id, motivo_reprovado, comentario_beneficiario, created_at, updated_at
             from solicitacoes
             where 1=1 {conditions} order by updated_at {order} limit %s offset %s;
     '''
