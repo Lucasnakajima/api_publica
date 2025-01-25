@@ -1502,7 +1502,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
             if key == 'data_de_nascimento_beneficiario':
                 value = parameters[key]
                 condition.append(f"{db_field} = %s")
-                params.append(datetime.strptime(value), '%d/%m/%Y').date().isoformat()
+                params.append(datetime.strptime(value, '%d/%m/%Y').date().isoformat())
 
             else:
                 value = parameters[key]
