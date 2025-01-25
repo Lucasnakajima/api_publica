@@ -472,7 +472,9 @@ class AprovadoAlertId:
     self.alert_id = alert_id
 
 class SolicitationRequest:
-  def __init__(self, id, alert_id, auditor, resp_nome, idade, cid, deficiencia, local_retirada, municipio_naturalidade, municipios_endereco, meta, attachments, statusId, channelId, via, external_id, created_at, updated_at) -> None:
+  def __init__(self, id, alert_id, auditor, resp_nome, idade, cid, deficiencia, local_retirada, municipio_naturalidade, 
+               municipios_endereco, meta, attachments, statusId, channelId, via, external_id,
+                motivo_reprovado, comentario_beneficiario, created_at, updated_at) -> None:
     self.id = id
     self.alert_id = alert_id
     self.auditor = auditor
@@ -489,6 +491,8 @@ class SolicitationRequest:
     self.channelId = channelId
     self.via = via
     self.external_id = external_id
+    self.motivo_reprovado = motivo_reprovado
+    self.comentario_beneficiario = comentario_beneficiario
     self.created_at = created_at
     self.updated_at = updated_at
 
