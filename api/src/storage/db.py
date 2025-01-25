@@ -1489,7 +1489,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
         field_map = {
             "nome_do_beneficiario": "benef_nome",
             "rg_beneficiario": "benef_rg",
-            "data_de_nascimento_beneficiario": format_date,
+            "data_de_nascimento_beneficiario": "benef_data_nasc",
             "cid_beneficiario": "cid",
             "tipo_sanguineo_beneficiario": "fator_rh",
             "nome_do_responsavel_legal_beneficiario": "resp_nome",
@@ -1499,13 +1499,15 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
 
     for key, db_field in field_map.items():
         if key in parameters:
-            if callable(db_field):  # Verifique se é uma função (como format_date)
-                value = db_field(parameters[key])  # Chame a função para processar o valor
+            if key == 'data_de_nascimento_beneficiario':
+                value = parameters[key]
+                condition.append(f"{db_field} = %s")
+                params.append(datetime.strptime(value), '%d/%m/%Y').date().isoformat()
+
             else:
                 value = parameters[key]
-            condition.append(f"{db_field} = %s")
-            params.append(value)
-
+                condition.append(f"{db_field} = %s")
+                params.append(value)
 
     keys_used = [key for key in parameters.keys() if key in keys_validates]
     for chave in keys_used:
