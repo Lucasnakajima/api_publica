@@ -1357,6 +1357,15 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise e
     
+@app.post("/upload/image/recurso")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        contents = file.file.read()
+        img_name = upload_image_recurso(contents)
+        return {"uuid": img_name}
+    except Exception as e:
+        raise e
+    
 @app.get("/historico_cpf")
 async def historicoByCPF(cpf: str):
     try:
