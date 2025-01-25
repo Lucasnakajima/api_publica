@@ -284,6 +284,7 @@ def serialize_solicitation_requests(requests):
         "comentario_beneficiario": r.comentario_beneficiario,
         "justificativa_recurso": r.justificativa_recurso,
         "tag_recurso": r.tag_recurso,
+        "anexos_pendentes": r.anexos_pendentes,
         "created_at": r.created_at,
         "updated_at": r.updated_at
     } for r in requests]
@@ -1315,10 +1316,11 @@ async def patch_solicitacoes_teste(
         auditor: str,
         motivo_reprovado: Optional[str] = Query(None, alias='motivo_reprovado'),
         comentario_beneficiario: Optional[str] = Query(None, alias='comentario_beneficiario'),
-        justificativa_recurso: Optional[str] = Query(None, alias='justificativa_recurso'),
+        justificativa_recurso: Optional[str] = Query(None, alias='justificativa_recurso'),  
+        anexos_pendentes: Optional[str] = Query(None, alias='anexos_pendentes'),
         meta: Optional[dict] = Body(None, alias='meta'),
         keys: Optional[List[str]] = Query(None, alias='keys'),
-        values: Optional[List[str]] = Query(None, alias='values'),                           
+        values: Optional[List[str]] = Query(None, alias='values')                        
 ):
     if keys and values and len(keys) != len(values):
         return {"error": "The number of keys must match the number of values."}
@@ -1326,7 +1328,7 @@ async def patch_solicitacoes_teste(
     try:
         update_solicitacoes_teste(
             alert_id, statusId, auditor, motivo_reprovado, 
-            comentario_beneficiario, justificativa_recurso, meta, keys, values
+            comentario_beneficiario, justificativa_recurso, anexos_pendentes, meta, keys, values
         )
         return {"success": True}
     except Exception as e:
