@@ -33,6 +33,25 @@ def upload_image(contents):
 
     return image_name
 
+def upload_image_recurso(contents):
+    s3_client = boto3.client("s3")
+    image_name = str(uuid.uuid4()) + '.jpg'
+
+    temp_file = io.BytesIO()
+    temp_file.write(contents)
+    temp_file.seek(0)
+    s3_client.upload_fileobj(temp_file, 'sejusc-pcd-ciptea-images/recurso', image_name)
+    
+    s3_client.put_object_acl(
+        ACL='public-read',
+        Bucket='sejusc-pcd-ciptea-images',
+        Key=image_name
+    )
+
+    temp_file.close()
+
+    return image_name
+
 def format_date(date_str):
     try:
         return datetime.strptime(date_str, '%d/%m/%Y').date().isoformat()
@@ -1523,7 +1542,6 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
             params.append(parameters[chave])
 
 
-    # Atualizando 'attachments_recurso'
     # Atualizando 'attachments_recurso'
     if keys and values:
         # Obter o JSON atual de 'attachments_recurso' ou criar um novo dicionário vazio
