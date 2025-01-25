@@ -1490,7 +1490,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
 
     if anexos_pendentes:
         condition.append('anexos_pendentes = %s')
-        params.append(justificativa_recurso)
+        params.append(anexos_pendentes)
 
     # Atualizando parâmetros adicionais
     if parameters:
