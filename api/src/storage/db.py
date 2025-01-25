@@ -1524,12 +1524,23 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
 
 
     # Atualizando 'attachments_recurso'
+    # Atualizando 'attachments_recurso'
     if keys and values:
-        current_attachments = json.loads(data[0].get('attachments_recurso', '{}')) if data and data[0].get('attachments_recurso') else {}
+        # Obter o JSON atual de 'attachments_recurso' ou criar um novo dicionário vazio
+        current_attachments = (
+            json.loads(data[0].get('attachments_recurso', '{}'))
+            if data and data[0].get('attachments_recurso') else {}
+        )
+
+        # Atualizar ou adicionar as novas chaves e valores ao JSON
         for key, value in zip(keys, values):
             current_attachments[key] = value
+
+        # Convertendo o dicionário atualizado de volta para JSON
+        updated_attachments = json.dumps(current_attachments)
         condition.append('attachments_recurso = %s')
-        params.append(json.dumps(current_attachments))
+        params.append(updated_attachments)
+
 
     params.append(alert_id)
 
