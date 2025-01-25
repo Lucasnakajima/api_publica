@@ -1543,6 +1543,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
 
 
     # Atualizando 'attachments_recurso'
+    # Atualizando 'attachments_recurso'
     if keys and values:
         # Obter o JSON atual de 'attachments_recurso' ou criar um novo dicionário vazio
         current_attachments = (
@@ -1550,15 +1551,15 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
             if data and data[0].get('attachments_recurso') else {}
         )
 
-        # Atualizar ou adicionar as novas chaves e valores ao JSON
+        # Atualizar ou adicionar apenas novas chaves e valores sem sobrescrever os existentes
         for key, value in zip(keys, values):
-            current_attachments[key] = value
+            if key not in current_attachments:
+                current_attachments[key] = value  # Adicionar apenas se a chave não existir
 
         # Convertendo o dicionário atualizado de volta para JSON
         updated_attachments = json.dumps(current_attachments)
         condition.append('attachments_recurso = %s')
         params.append(updated_attachments)
-
 
     params.append(alert_id)
 
