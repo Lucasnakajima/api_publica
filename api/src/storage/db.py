@@ -40,12 +40,12 @@ def upload_image_recurso(contents):
     temp_file = io.BytesIO()
     temp_file.write(contents)
     temp_file.seek(0)
-    s3_client.upload_fileobj(temp_file, 'sejusc-pcd-ciptea-images/recurso', image_name)
+    s3_client.upload_fileobj(temp_file, 'sejusc-pcd-ciptea-images', f'recurso/{image_name}')
     
     s3_client.put_object_acl(
         ACL='public-read',
         Bucket='sejusc-pcd-ciptea-images',
-        Key=image_name
+        Key=f'recurso/{image_name}'
     )
 
     temp_file.close()
