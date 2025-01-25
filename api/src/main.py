@@ -280,6 +280,8 @@ def serialize_solicitation_requests(requests):
         "channelId": r.channelId,
         "via": r.via,
         "external_id": r.external_id,
+        "motivo_reprovado": r.motivo_reprovado,
+        "comentario_beneficiario": r.comentario_beneficiario,
         "created_at": r.created_at,
         "updated_at": r.updated_at
     } for r in requests]
