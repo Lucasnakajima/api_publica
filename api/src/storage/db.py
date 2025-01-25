@@ -1462,7 +1462,7 @@ def update_solicitacoes(alert_id: int, statusId: int, parameters: dict):
 
 
 def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str, 
-                              motivo_reprovado: str, comentario_beneficiario: str, 
+                              motivo_reprovado: str, comentario_beneficiario: str, justificativa_recurso: str,
                               parameters: dict, keys: list = None, values: list = None):
     requests = get_solicitation_meta_by_alert_id(alert_id)
     data = SolicitationMetaByAlertId.serialize_meta(requests=requests)
@@ -1483,6 +1483,10 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
     if comentario_beneficiario:
         condition.append('comentario_beneficiario = %s')
         params.append(comentario_beneficiario)
+
+    if justificativa_recurso:
+        condition.append('justificativa_recurso = %s')
+        params.append(justificativa_recurso)
 
     # Atualizando parâmetros adicionais
     if parameters:
