@@ -282,6 +282,8 @@ def serialize_solicitation_requests(requests):
         "external_id": r.external_id,
         "motivo_reprovado": r.motivo_reprovado,
         "comentario_beneficiario": r.comentario_beneficiario,
+        "justificativa_recurso": r.justificativa_recurso,
+        "tag_recurso": r.tag_recurso,
         "created_at": r.created_at,
         "updated_at": r.updated_at
     } for r in requests]
@@ -1313,6 +1315,7 @@ async def patch_solicitacoes_teste(
         auditor: str,
         motivo_reprovado: Optional[str] = Query(None, alias='motivo_reprovado'),
         comentario_beneficiario: Optional[str] = Query(None, alias='comentario_beneficiario'),
+        justificativa_recurso: Optional[str] = Query(None, alias='justificativa_recurso'),
         meta: Optional[dict] = Body(None, alias='meta'),
         keys: Optional[List[str]] = Query(None, alias='keys'),
         values: Optional[List[str]] = Query(None, alias='values'),                           
@@ -1323,7 +1326,7 @@ async def patch_solicitacoes_teste(
     try:
         update_solicitacoes_teste(
             alert_id, statusId, auditor, motivo_reprovado, 
-            comentario_beneficiario, meta, keys, values
+            comentario_beneficiario, justificativa_recurso, meta, keys, values
         )
         return {"success": True}
     except Exception as e:
