@@ -1501,22 +1501,22 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
             "rg_responsavel": "resp_rg"
         }
 
-    for key, db_field in field_map.items():
-        if key in parameters:
-            if key == 'data_de_nascimento_beneficiario':
-                value = parameters[key]
-                condition.append(f"{db_field} = %s")
-                params.append(datetime.strptime(value, '%d/%m/%Y').date().isoformat())
+        for key, db_field in field_map.items():
+            if key in parameters:
+                if key == 'data_de_nascimento_beneficiario':
+                    value = parameters[key]
+                    condition.append(f"{db_field} = %s")
+                    params.append(datetime.strptime(value, '%d/%m/%Y').date().isoformat())
 
-            else:
-                value = parameters[key]
-                condition.append(f"{db_field} = %s")
-                params.append(value)
+                else:
+                    value = parameters[key]
+                    condition.append(f"{db_field} = %s")
+                    params.append(value)
 
-    keys_used = [key for key in parameters.keys() if key in keys_validates]
-    for chave in keys_used:
-        condition.append(f"meta = JSON_SET(meta, '$.{chave}', %s)")
-        params.append(parameters[chave])
+        keys_used = [key for key in parameters.keys() if key in keys_validates]
+        for chave in keys_used:
+            condition.append(f"meta = JSON_SET(meta, '$.{chave}', %s)")
+            params.append(parameters[chave])
 
 
     # Atualizando 'attachments_recurso'
