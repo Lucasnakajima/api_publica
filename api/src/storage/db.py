@@ -33,6 +33,13 @@ def upload_image(contents):
 
     return image_name
 
+def format_date(date_str):
+    try:
+        return datetime.strptime(date_str, '%d/%m/%Y').date().isoformat()
+    except ValueError as e:
+        raise ValueError(f"Data inválida: {date_str}. Use o formato DD/MM/AAAA.") from e
+
+
 def get_db_credentials():
     secret = secrets_manager.get_secret_value(SecretId=secret_arn)
 
@@ -1482,7 +1489,7 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
         field_map = {
             "nome_do_beneficiario": "benef_nome",
             "rg_beneficiario": "benef_rg",
-            "data_de_nascimento_beneficiario": lambda v: datetime.strptime(v, '%d/%m/%Y').date().isoformat(),
+            "data_de_nascimento_beneficiario": format_date,
             "cid_beneficiario": "cid",
             "tipo_sanguineo_beneficiario": "fator_rh",
             "nome_do_responsavel_legal_beneficiario": "resp_nome",
@@ -1492,12 +1499,13 @@ def update_solicitacoes_teste(alert_id: int, statusId: int, auditor: str,
 
     for key, db_field in field_map.items():
         if key in parameters:
-            if callable(db_field):  # Se for função, processa o valor
-                value = db_field(parameters[key])
+            if callable(db_field):  # Verifique se é uma função (como format_date)
+                value = db_field(parameters[key])  # Chame a função para processar o valor
             else:
                 value = parameters[key]
             condition.append(f"{db_field} = %s")
             params.append(value)
+
 
     keys_used = [key for key in parameters.keys() if key in keys_validates]
     for chave in keys_used:
