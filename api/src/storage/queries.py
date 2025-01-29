@@ -87,7 +87,7 @@ class Queries(str, Enum):
             select benef_cpf, hashId, benef_nome, resp_nome,
             UPPER(REPLACE(municipio_realizado_cadastro_meta, '_', ' ')) AS municipio,
             UPPER(REPLACE(cid, '_', ' ')) AS cid, 
-            tipo_da_deficiencia_meta, 
+            tipo_da_deficiencia_meta, tag_recurso,
             UPPER(REPLACE(municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta,
             fn_CALC_IDADE(benef_data_nasc) as idade, benef_telefone, 
             UPPER(REPLACE(REGEXP_REPLACE(local_de_retirada_meta, '^[0-9]+_', ''), '_', ' ')) AS local_de_retirada_meta,
