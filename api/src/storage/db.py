@@ -63,7 +63,7 @@ def get_db_credentials():
     secret = secrets_manager.get_secret_value(SecretId=secret_arn)
 
     return {
-        "host": 'rds-pcd-prod.cluster-c4irymq85uhb.sa-east-1.rds.amazonaws.com',
+        "host": 'rds-dev-test-cluster.cluster-c4irymq85uhb.sa-east-1.rds.amazonaws.com',
         "user": json.loads(secret['SecretString'])['username'],
         "password": json.loads(secret['SecretString'])['password'],
     }
@@ -317,6 +317,9 @@ def get_hash(filters: dict) -> List[HashRequest]:
     if filters.get('deficiencia'):
         condition += 'and lower(TRIM(tipo_da_deficiencia_meta)) like %s'
         params.append('%'+ filters['deficiencia'] + '%') 
+    if filters.get('recurso'):
+        condition += 'and recurso = %s'
+        params.append(filters['recurso'])
     if filters.get('start_date'):
         condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) >= %s "
         params.append(filters['start_date'])
