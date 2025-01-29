@@ -46,13 +46,15 @@ class LastSolicitations:
     self.created_at = created_at
 
 class HashRequest:
-  def __init__(self, benef_cpf, hashId, benef_nome, resp_nome, municipio, cid, tipo_da_deficiencia_meta, naturalidade, idade, benef_telefone, local_de_retirada, channelId, alert_id, last_created, last_updated, total):
+  def __init__(self, benef_cpf, hashId, benef_nome, resp_nome, municipio, cid, tipo_da_deficiencia_meta, tag_recurso,
+                naturalidade, idade, benef_telefone, local_de_retirada, channelId, alert_id, last_created, last_updated, total):
     self.benef_cpf = benef_cpf
     self.hashId = hashId
     self.benef_nome = benef_nome
     self.resp_nome = resp_nome
     self.cid = cid
     self.tipo_da_deficiencia_meta = tipo_da_deficiencia_meta
+    self.tag_recurso = tag_recurso
     self.municipio = municipio
     self.naturalidade = naturalidade
     self.idade = idade
