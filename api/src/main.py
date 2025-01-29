@@ -50,6 +50,7 @@ def serialize_hash(requests):
         'nome_responsavel': r.resp_nome,
         'cid': r.cid,
         'deficiencia': r.tipo_da_deficiencia_meta,
+        'recurso': r.tag_recurso,
         'municipio': r.municipio,
         'naturalidade': r.naturalidade,
         'idade': r.idade,
@@ -669,6 +670,7 @@ async def get_cpf(
         municipio_realizado_cadastro: Optional[str] = Query(None, alias='municipio_realizado_cadastro'),
         local_de_retirada: Optional[str] = Query(None, alias = 'local_de_retirada'),
         deficiencia: Optional[str] = Query(None, alias= 'deficiencia'),
+        recurso: Optional[bool] = Query(None, alias= 'recurso'),
         start_date: Optional[str] = Query(None, alias='start_date'),
         end_date: Optional[str] = Query(None, alias='end_date'),
         especific_date: Optional[str] = Query(None, alias='especific_date')
@@ -676,7 +678,7 @@ async def get_cpf(
     filters = {'view': view, 'order': order, 'inicio': inicio, 'fim': fim, 'cpf': cpf, 
     'nome': nome, 'nome_responsavel': nome_responsavel, 'cid': cid, 'alert_id': alert_id, 
     'projeto': projeto, 'via': via, 'municipio_realizado_cadastro': municipio_realizado_cadastro,
-    'local_de_retirada': local_de_retirada, 'deficiencia': deficiencia, 
+    'local_de_retirada': local_de_retirada, 'deficiencia': deficiencia, 'recurso': recurso,
     'start_date': start_date, 'end_date': end_date, 'especific_date': especific_date}
     
     requests = get_hash(filters=filters)
