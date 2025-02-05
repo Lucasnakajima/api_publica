@@ -670,7 +670,7 @@ async def get_cpf(
         municipio_realizado_cadastro: Optional[str] = Query(None, alias='municipio_realizado_cadastro'),
         local_de_retirada: Optional[str] = Query(None, alias = 'local_de_retirada'),
         deficiencia: Optional[str] = Query(None, alias= 'deficiencia'),
-        recurso: Optional[bool] = Query(None, alias= 'recurso'),
+        recurso: Optional[int] = Query(None, alias= 'recurso'),
         start_date: Optional[str] = Query(None, alias='start_date'),
         end_date: Optional[str] = Query(None, alias='end_date'),
         especific_date: Optional[str] = Query(None, alias='especific_date')
