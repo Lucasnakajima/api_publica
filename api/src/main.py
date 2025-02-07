@@ -828,6 +828,7 @@ async def solicitacoes(
         local_retirada: Optional[str] = Query(None, alias='local_retirada'),
         municipio: Optional[str] = Query(None, alias='municipio'),
         projeto: Optional[str] = Query(None, alias='projeto'),
+        recurso: Optional[int] = Query(None, alias='recurso'),
         start_date: Optional[str] = Query(None, alias='start_date'),
         end_date: Optional[str] = Query(None, alias='end_date'),
         orientation_date: Optional[str] = Query(None, alias='orientation_date')
@@ -835,7 +836,7 @@ async def solicitacoes(
     filters = {'alert_id': alert_id, 'cpf': cpf, 'hashId': hashId, 'inicio': inicio, 'fim': fim, 'order':order,
                'nome': nome, 'nome_responsavel': nome_responsavel, 'cid': cid, 'deficiencia': deficiencia,
                'local_retirada': local_retirada, 'municipio': municipio,
-               'status': status, 'projeto': projeto, 
+               'status': status, 'projeto': projeto, 'recurso':recurso,
                'start_date': start_date, 'end_date': end_date, 'orientation_date': orientation_date}
 
     requests = get_solicitacoes(filters=filters)
