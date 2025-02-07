@@ -318,8 +318,12 @@ def get_hash(filters: dict) -> List[HashRequest]:
         condition += 'and lower(TRIM(tipo_da_deficiencia_meta)) like %s'
         params.append('%'+ filters['deficiencia'] + '%') 
     if filters.get('recurso'):
-        condition_group += 'and tag_recurso = %s'
-        params.append(filters['recurso'])
+        if filters.get('recurso') == 1:
+            condition_group += 'and tag_recurso = 1'
+            params.append(filters['recurso'])
+        elif filters.get('recurso') == 0:
+            condition_group += 'and tag_recurso = 0'
+            params.append(filters['recurso'])        
     if filters.get('start_date'):
         condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) >= %s "
         params.append(filters['start_date'])
