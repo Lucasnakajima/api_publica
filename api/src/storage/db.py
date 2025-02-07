@@ -319,10 +319,10 @@ def get_hash(filters: dict) -> List[HashRequest]:
         params.append('%'+ filters['deficiencia'] + '%') 
     if filters.get('recurso'):
         if filters.get('recurso') == 1:
-            condition += 'and tag_recurso = 1'
+            condition += 'and tag_recurso is true'
             params.append(filters['recurso'])
         elif filters.get('recurso') == 0:
-            condition += 'and tag_recurso = 0'
+            condition += 'and tag_recurso is false'
             params.append(filters['recurso'])        
     if filters.get('start_date'):
         condition_group += " and MAX(DATE(CONVERT_TZ(created_at, '+00:00', '-04:00'))) >= %s "
