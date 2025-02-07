@@ -660,7 +660,7 @@ def get_solicitacoes(filters: dict) -> List[SolicitationRequest]:
             condition += " and channelId in (12836, 4499, 4495)"
         else:
             condition += " and channelId in (12837, 6790, 6744)"
-    if 'recurso' in filters and filters['recurso'] is not None:
+    if filters.get('recurso') is not None:
         condition += ' AND tag_recurso = %s'
         params.append(filters['recurso'])
     if filters.get('start_date'):
