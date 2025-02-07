@@ -332,9 +332,6 @@ def get_hash(filters: dict) -> List[HashRequest]:
     params.append(filters['fim'])
     params.append(filters['inicio'])
 
-    print("Query Executada:", query.format(conditions=condition, conditions_group=condition_group, order=order))
-    print("Parâmetros:", params)
-
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute(query.format(conditions=condition ,conditions_group=condition_group ,order=order), params)
