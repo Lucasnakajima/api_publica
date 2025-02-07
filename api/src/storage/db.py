@@ -669,6 +669,10 @@ def get_solicitacoes(filters: dict) -> List[SolicitationRequest]:
     if filters.get('end_date'):
         condition += f" and DATE(CONVERT_TZ({filters['orientation_date']}, '+00:00', '-04:00')) <= %s"
         params.append(filters['end_date'])
+
+    print("Query Executada:", query.format(conditions=condition, order=order))
+    print("Parâmetros:", params)
+
     
     params.append(filters['fim'])
     params.append(filters['inicio'])
