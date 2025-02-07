@@ -52,10 +52,10 @@ class HashRequest:
     self.hashId = hashId
     self.benef_nome = benef_nome
     self.resp_nome = resp_nome
+    self.municipio = municipio
     self.cid = cid
     self.tipo_da_deficiencia_meta = tipo_da_deficiencia_meta
     self.tag_recurso = tag_recurso
-    self.municipio = municipio
     self.naturalidade = naturalidade
     self.idade = idade
     self.benef_telefone = benef_telefone
