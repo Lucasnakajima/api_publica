@@ -521,12 +521,13 @@ class CountRecepcao:
     self.count = count
 
 class SolicitationAlertRequest:
-  def __init__(self, id, alert_id, benef_cpf, meta, attachments, statusId, channelId, tipo_carteira, updated_at, created_at) -> None:
+  def __init__(self, id, alert_id, benef_cpf, meta, attachments, attachments_recurso, statusId, channelId, tipo_carteira, updated_at, created_at) -> None:
     self.id = id
     self.alert_id = alert_id
     self.benef_cpf = benef_cpf
     self.meta = json.loads(meta)
     self.attachments = json.loads(attachments)
+    self.attachments_recurso = json.loads(attachments_recurso)
     self.statusId = statusId
     self.channelId = channelId
     self.via = tipo_carteira
