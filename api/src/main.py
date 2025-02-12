@@ -307,6 +307,7 @@ def serialize_solicitation_alert_requests(requests):
         "benef_cpf": r.benef_cpf,
         "meta": r.meta,
         "attachments": r.attachments,
+        "attachments_recurso": r.attachments_recurso,
         "status_id": r.statusId,
         "channelId": r.channelId,
         "via": r.via,
