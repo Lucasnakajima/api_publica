@@ -39,7 +39,7 @@ class Queries(str, Enum):
     '''
 
     get_solicitacao_alert = '''
-            select id, alert_id, benef_cpf, meta, attachments,
+            select id, alert_id, benef_cpf, meta, attachments, attachments_recurso,
                    statusId, channelId, tipo_carteira, updated_at, created_at
             from solicitacoes
             where {conditions}
