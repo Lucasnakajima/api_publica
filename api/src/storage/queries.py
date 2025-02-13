@@ -977,7 +977,7 @@ class Queries(str, Enum):
         UPPER(REPLACE(REGEXP_REPLACE(local_de_retirada_meta, '^[0-9]+_', ''), '_', ' ')) AS local_de_retirada_meta, 
         UPPER(REPLACE(municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta, 
         tipo_da_deficiencia_meta, external_id, created_at, tipo_carteira, statusId, channelId, attachments, resp_email, 
-        meta ->> '$.sexo_genero_beneficiario' as sexo_beneficiario
+        meta ->> '$.sexo_genero_beneficiario' as sexo_beneficiario, attachments_recurso
         from solicitacoes s
         where hashId = %s
         order by created_at desc
