@@ -622,7 +622,7 @@ class SolicitationByhashId:
     self.resp_email = resp_email
     self.sexo_beneficiario = sexo_beneficiario
     try :
-      self._format_attachments_recurso(attachments_recurso)
+      self.attachments_recurso = self._format_attachments_recurso(attachments_recurso)
     except:
       self.attachments_recurso = json.loads('{}')
 
