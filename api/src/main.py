@@ -445,7 +445,8 @@ def serialize_solicitation_by_hashId(requests):
        "doc_comprovante_endereco_responsavel_legal_anexo": r.doc_comprovante_endereco_responsavel_legal_anexo,
        "biometria_do_beneficiario": r.biometria_do_beneficiario,
        "resp_email": r.resp_email,
-       "sexo_beneficiario": r.sexo_beneficiario
+       "sexo_beneficiario": r.sexo_beneficiario,
+       "attachments_recurso": r.attachments_recurso
     }for r in requests]
 
 def serialize_history_by_alert_id(requests):
