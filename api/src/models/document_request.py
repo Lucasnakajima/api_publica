@@ -622,7 +622,7 @@ class SolicitationByhashId:
     self.resp_email = resp_email
     self.sexo_beneficiario = sexo_beneficiario
     try :
-      self.attachments_recurso = attachments_recurso
+      self.attachments_recurso = self._format_attachments_recurso(attachments_recurso)
     except:
       self.attachments_recurso = json.loads('{}')
 
@@ -682,9 +682,10 @@ class SolicitationByhashId:
   def _format_attachments_recurso(self, attachments):
     base_url = "https://sejusc-pcd-ciptea-images.s3.sa-east-1.amazonaws.com/recurso/" 
 
-    attachments_com_url = {chave: base_url + valor for chave, valor in attachments.items()}
+    attachments_com_url = [base_url + valor for valor in attachments.values()]
 
-    return json.loads(attachments_com_url)
+
+    return attachments_com_url
 
   
   def _extract_attachments_info(self, attachments):
