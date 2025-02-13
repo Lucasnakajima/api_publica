@@ -623,8 +623,8 @@ class SolicitationByhashId:
     self.sexo_beneficiario = sexo_beneficiario
     try :
       self._format_attachments_recurso(attachments_recurso)
-    except:
-      self.attachments_recurso = json.loads('{}')
+    except Exception as e:
+            print(f"Erro ao formatar attachments_recurso: {e}")
 
   def _extract_data_beneficiario(self, meta):
     try:
