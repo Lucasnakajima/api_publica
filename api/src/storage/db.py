@@ -1726,52 +1726,86 @@ def get_produtividade(filters: dict) -> List[Produtividade]:
 
 def getStatus_solicitacao(cpf: str, data_nascimento: str, projeto: str):
     channelIds = ''
-    if projeto == 'PCD':
+    if projeto.upper() == 'PCD':
         channelIds = 'AND channelId IN (12836, 4499, 4495, 14057)'
     else:
         channelIds = 'AND channelId IN (12837, 6790, 6744, 13800)'
 
-    # Converte a data de nascimento para o formato do banco de dados
     try:
         data_nascimento_formatada = datetime.strptime(data_nascimento, '%d/%m/%Y').strftime('%Y-%m-%d')
     except ValueError:
         raise ValueError("Formato de data de nascimento inválido. Use dd/mm/aaaa.")
-    
-    condition = 'benef_cpf = %s AND benef_data_nasc = %s'
 
-    # Consulta para buscar todas as solicitações do beneficiário
-    query = Queries.get_status_solicitacao.format(conditions=condition, conditions_channel_ids=channelIds)
-    params = [cpf, data_nascimento_formatada]
+    condition = 'benef_cpf = %s AND benef_data_nasc = %s'
+    
+    # Verifica se existem carteiras de segunda via primeiro
+    condition_2_via = f"{condition} AND tipo_carteira IN ('2_via', '2° Via')"
+    
+    query_2_via = Queries.get_status_solicitacao.format(conditions=condition_2_via, conditions_channel_ids=channelIds)
+    query_normal = Queries.get_status_solicitacao.format(conditions=condition, conditions_channel_ids=channelIds)
 
     conn = get_conn()
-    cursor = conn.cursor()
-    cursor.execute(query, params)
-    solicitacoes = cursor.fetchall()
+    
+    with conn.cursor() as cursor:
+        cursor.execute(query_2_via, [cpf, data_nascimento_formatada])
+        solicitacoes_2_via = cursor.fetchall()
 
-    # Verifica se há solicitações e seleciona a de maior prioridade
+    # Se houver segundas vias, usamos elas, senão pegamos as normais
+    if solicitacoes_2_via:
+        solicitacoes = solicitacoes_2_via
+    else:
+        with conn.cursor() as cursor:
+            cursor.execute(query_normal, [cpf, data_nascimento_formatada])
+            solicitacoes = cursor.fetchall()
+
+    # Se não há registros, retorna None
     if not solicitacoes:
         return None
 
-    # Dicionário de prioridade dos statusId
+    # Converte os resultados para objetos StatusSolicitacao
+    solicitacoes = [StatusSolicitacao(*solicitacao) for solicitacao in solicitacoes]
+
+    # Dicionário de prioridade dos statusId (precisamos atualizar conforme sua necessidade)
     prioridade_status = {
-        10: 0, 19: 0, 17: 0, 24: 1, 7: 1, 18: 1, 29: 1,
-        9: 2, 23: 3, 27: 4, 22: 5, 5: 6, 31: 7, 3: 8, 13: 8,
-        20: 8, 1: 9, 26: 10, 21: 11, 2: 12, 33: 13, 34: 14, 35: 15,
-        32: 16, 6: 17, 25: 18, 28: 19, 4: 20, 8: 21
-    }
+    # Prioridade mais alta (0)
+    10: 0, 17: 0, 19: 0,
+
+    # Prioridade 1
+    7: 1, 18: 1, 29: 1,
+
+    # Prioridade 2
+    24: 2,
+
+    # Prioridade 3
+    3: 3, 13: 3, 20: 3, 30: 3, 5: 3, 31: 3,
+
+    # Prioridade 4
+    9: 4,
+
+    # Prioridade 5
+    1: 5,
+
+    # Prioridade 6
+    2: 6,
+
+    # Prioridade 7
+    33: 7, 34: 7, 35: 7, 36: 7,
+
+    # Prioridade mais baixa (8)
+    6: 8, 25: 8, 32: 8
+}
+
 
     # Função para obter a prioridade do statusId
     def obter_prioridade(statusId):
         return prioridade_status.get(statusId, len(prioridade_status))
-
-    # Modifique para retornar apenas um registro
-    solicitacoes = [StatusSolicitacao(*solicitacao) for solicitacao in solicitacoes]
 
     # Ordena as solicitações pela prioridade do statusId
     solicitacoes.sort(key=lambda x: obter_prioridade(x.statusId))
 
     # Retorna a solicitação com maior prioridade
     return solicitacoes[0] if solicitacoes else None
+
 
 
 
