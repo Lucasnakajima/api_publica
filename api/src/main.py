@@ -1273,6 +1273,7 @@ async def patch_aprovados(
         projeto: str,
         alert_ids: int,
         statusId: int,
+        auditor: Optional[str] = Query(None, alias='auditor'),
         foto_3x4: Optional[str] = Body(None, alias='foto_3x4'),
         nome: Optional[str] = Body(None, alias='nome'),
         foto_digital: Optional[str] = Body(None, alias='foto_digital'),
@@ -1280,7 +1281,9 @@ async def patch_aprovados(
         expedicao: Optional[str] = Body(None, alias='expedicao'),
         lote: Optional[str] = Body(None, alias='lote')
 ):
-    parameters = {'foto_3x4': foto_3x4, 'foto_digital': foto_digital, 'vencimento': vencimento, 'expedicao': expedicao, 'lote': lote, 'statusId': statusId, 'nome': nome}
+    parameters = {'foto_3x4': foto_3x4, 'foto_digital': foto_digital, 'vencimento': vencimento,
+                   'expedicao': expedicao, 'lote': lote, 
+                   'statusId': statusId, 'nome': nome, 'auditor': auditor}
 
     try:
         update_aprovados(projeto, parameters, alert_ids)
