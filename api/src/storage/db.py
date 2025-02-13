@@ -1404,6 +1404,10 @@ def update_aprovados(
     params = []
 
     condition = ''
+
+    if parameters.get('auditor'):
+        condition += 'auditor = %s'
+        parameters.append(parameters['auditor'])
     if parameters.get('foto_3x4'):
         condition += ' foto_3x4 = %s,'
         params.append(parameters['foto_3x4'])
