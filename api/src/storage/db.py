@@ -235,6 +235,8 @@ def get_solicitacao_by_hashId(hashId:str) -> List[SolicitationByhashId]:
     cursor.execute(query, params)
     requests = cursor.fetchall()
 
+    print("DEBUG: Dados brutos do banco:", requests) 
+
     return [SolicitationByhashId(*req) for req in requests]
 
 def get_historic_by_alertd_id(alert_id:int) -> List[HistoryByAlertId]:
