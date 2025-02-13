@@ -623,8 +623,8 @@ class SolicitationByhashId:
     self.sexo_beneficiario = sexo_beneficiario
     try :
       self._format_attachments_recurso(attachments_recurso)
-    except Exception as e:
-            print(f"Erro ao formatar attachments_recurso: {e}")
+    except:
+      self.attachments_recurso = json.loads('{}')
 
   def _extract_data_beneficiario(self, meta):
     try:
@@ -680,12 +680,11 @@ class SolicitationByhashId:
       return None, None
     
   def _format_attachments_recurso(self, attachments):
-    base_url = "https://sejusc-pcd-ciptea-images.s3.sa-east-1.amazonaws.com/recurso/"
-    meta_dict = json.loads(attachments)
+    base_url = "https://sejusc-pcd-ciptea-images.s3.sa-east-1.amazonaws.com/recurso/" 
 
-    attachments_com_url = {chave: base_url + valor for chave, valor in meta_dict.items()}
+    attachments_com_url = {chave: base_url + valor for chave, valor in attachments.items()}
 
-    return attachments_com_url
+    return json.loads(attachments_com_url)
 
   
   def _extract_attachments_info(self, attachments):
