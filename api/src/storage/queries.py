@@ -138,7 +138,7 @@ class Queries(str, Enum):
                 UPPER(REPLACE(municipios_naturalidade_meta, '_', ' ')) AS municipios_naturalidade_meta, cid, group_concat(channelId) as channelIds,
                 max(created_at) as last_created, max(updated_at) as last_updated, count(*) as total
                 from solicitacoes
-                where {conditions}
+                where {conditions} and migrado is null or migrado > 1
                 group by benef_cpf
                 order by last_updated {order} limit %s offset %s;
     '''
