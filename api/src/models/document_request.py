@@ -527,7 +527,10 @@ class SolicitationAlertRequest:
     self.benef_cpf = benef_cpf
     self.meta = json.loads(meta)
     self.attachments = json.loads(attachments)
-    self.attachments_recurso = json.loads(attachments_recurso)
+    try:
+      self.attachments_recurso = json.loads(attachments_recurso)
+    except:
+      self.attachments_recurso = json.loads('{}')
     self.statusId = statusId
     self.channelId = channelId
     self.via = tipo_carteira
