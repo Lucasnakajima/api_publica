@@ -681,8 +681,9 @@ class SolicitationByhashId:
     
   def _format_attachments_recurso(self, attachments):
     base_url = "https://sejusc-pcd-ciptea-images.s3.sa-east-1.amazonaws.com/recurso/" 
+    meta_dict = json.loads(attachments)
     attachments_com_url = []
-    for valor in attachments.values():
+    for valor in meta_dict.values():
       attachments_com_url.append(base_url + valor)
 
 
