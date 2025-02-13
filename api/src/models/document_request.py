@@ -579,7 +579,7 @@ class AlertEventsBYCPF:
     self.createdAt = createdAt
       
 class SolicitationByhashId:
-  def __init__(self, alert_id ,benef_cpf ,benef_nome ,benef_rg ,benef_data_nasc ,cid ,fator_rh ,resp_nome ,resp_rg , benef_telefone, resp_telefone, meta, local_de_retirada, municipios_naturalidade_meta, tipo_da_deficiencia_meta, external_id, created_at, tipo_carteira, statusId, channelId, attachments, resp_email, sexo_beneficiario) -> None:
+  def __init__(self, alert_id ,benef_cpf ,benef_nome ,benef_rg ,benef_data_nasc ,cid ,fator_rh ,resp_nome ,resp_rg , benef_telefone, resp_telefone, meta, local_de_retirada, municipios_naturalidade_meta, tipo_da_deficiencia_meta, external_id, created_at, tipo_carteira, statusId, channelId, attachments, resp_email, sexo_beneficiario, attachments_recurso) -> None:
     self.alert_id = alert_id
     self.benef_cpf = benef_cpf
     self.benef_nome = benef_nome
@@ -621,7 +621,11 @@ class SolicitationByhashId:
     ) = extracted_info
     self.resp_email = resp_email
     self.sexo_beneficiario = sexo_beneficiario
-       
+    try :
+      self._format_attachments_recurso(attachments_recurso)
+    except:
+      self.attachments_recurso = json.loads('{}')
+
   def _extract_data_beneficiario(self, meta):
     try:
       meta_dict = json.loads(meta)
@@ -674,6 +678,15 @@ class SolicitationByhashId:
     except (json.JSONDecodeError, AttributeError):
       print('Erro ao decodificar o JSON ou meta não fornecido')
       return None, None
+    
+  def _format_attachments_recurso(self, attachments):
+    base_url = "https://sejusc-pcd-ciptea-images.s3.sa-east-1.amazonaws.com/recurso/" 
+    meta_dict = json.loads(attachments)
+
+    attachments_com_url = {chave: base_url + valor for chave, valor in meta_dict.items()}
+
+    return json.loads(attachments_com_url)
+
   
   def _extract_attachments_info(self, attachments):
     try:
