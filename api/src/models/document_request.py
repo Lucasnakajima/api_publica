@@ -684,7 +684,7 @@ class SolicitationByhashId:
 
     attachments_com_url = {chave: base_url + valor for chave, valor in attachments.items()}
 
-    return json.loads(attachments_com_url)
+    return attachments_com_url
 
   
   def _extract_attachments_info(self, attachments):
