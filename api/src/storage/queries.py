@@ -1214,7 +1214,12 @@ class Queries(str, Enum):
     '''
 
     get_status_solicitacao = '''
-        SELECT alert_id, benef_cpf, benef_nome, statusId, channelId, motivo_reprovado
+        SELECT alert_id, benef_cpf, benef_nome, statusId, channelId, motivo_reprovado, tag_recurso, UPPER(
+        REPLACE(
+            REGEXP_REPLACE(local_de_retirada_meta, '^[0-9]+_', ''), 
+            '_', ' '
+        )
+    ) AS local_de_retirada_meta
         FROM solicitacoes
         WHERE {conditions} {conditions_channel_ids}
     '''
