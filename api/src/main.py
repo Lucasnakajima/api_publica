@@ -621,6 +621,8 @@ def serialize_status_solicitacao(solicitacao):
         'alert_id': solicitacao.alert_id,
         'channelId': solicitacao.channelId,
         'motivo_reprovado': solicitacao.motivo_reprovado,
+        'tag_recurso': solicitacao.tag_recurso,
+        'local_de_retirada': solicitacao.local_de_retirada
     }
 
 @app.get("/requests")
