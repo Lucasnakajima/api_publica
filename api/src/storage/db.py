@@ -1793,10 +1793,11 @@ def getStatus_solicitacao(cpf: str, data_nascimento: str, projeto: str):
     2: 6,
 
     # Prioridade 7
-    33: 7, 34: 7, 35: 7, 36: 7,
+    6: 7, 25: 7, 32: 7,
+    
 
     # Prioridade mais baixa (8)
-    6: 8, 25: 8, 32: 8
+    33: 8, 34: 8, 35: 8, 36: 8
 }
 
 
