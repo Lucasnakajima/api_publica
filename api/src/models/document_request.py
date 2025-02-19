@@ -939,7 +939,9 @@ class Produtividade:
         self.data[k] = data[k]
 
 class StatusSolicitacao:
-  def __init__(self, alert_id, benef_cpf, benef_nome, statusId, channelId, motivo_reprovado, tag_recurso, local_de_retirada) -> None:
+  def __init__(self, alert_id, benef_cpf, benef_nome, statusId, channelId, 
+               motivo_reprovado, tag_recurso, justificativa_recurso,
+               local_de_retirada) -> None:
     self.alert_id = alert_id
     self.benef_cpf = benef_cpf
     self.benef_nome = benef_nome
@@ -947,6 +949,7 @@ class StatusSolicitacao:
     self.channelId = channelId
     self.motivo_reprovado = motivo_reprovado
     self.tag_recurso = tag_recurso
+    self.justificativa_recurso = justificativa_recurso
     self.local_de_retirada = local_de_retirada
 
 class VisualExportResponse:

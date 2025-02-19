@@ -1214,7 +1214,8 @@ class Queries(str, Enum):
     '''
 
     get_status_solicitacao = '''
-        SELECT alert_id, benef_cpf, benef_nome, statusId, channelId, motivo_reprovado, tag_recurso, UPPER(
+        SELECT alert_id, benef_cpf, benef_nome, statusId, channelId, motivo_reprovado, tag_recurso, justificativa_recurso,
+        UPPER(
         REPLACE(
             REGEXP_REPLACE(local_de_retirada_meta, '^[0-9]+_', ''), 
             '_', ' '
@@ -1222,6 +1223,7 @@ class Queries(str, Enum):
     ) AS local_de_retirada_meta
         FROM solicitacoes
         WHERE {conditions} {conditions_channel_ids}
+        ORDER BY created_at DESC
     '''
 
     get_visual_export = '''
