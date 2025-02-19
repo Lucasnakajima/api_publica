@@ -622,7 +622,7 @@ def serialize_status_solicitacao(solicitacao):
         'channelId': solicitacao.channelId,
         'motivo_reprovado': solicitacao.motivo_reprovado,
         'tag_recurso': solicitacao.tag_recurso,
-        'justificativa_recursi': solicitacao.justificativa_recurso,
+        'justificativa_recurso': solicitacao.justificativa_recurso,
         'local_de_retirada': solicitacao.local_de_retirada
     }
 
